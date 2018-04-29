@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Counter } from './components';
+import CryptoAssetTable, { CryptoAsset } from './components/CryptoAssetTable';
 
 render(
-  <Counter />,
+  <CryptoAssetTable assets={[CryptoAsset.BTC, CryptoAsset.ETH]} />,
   document.getElementById('root')
 );

@@ -1,5 +1,5 @@
-import Counter from './Counter';
+import CryptoAssetTable from './CryptoAssetTable';
 
 export {
-  Counter
+  CryptoAssetTable
 };
