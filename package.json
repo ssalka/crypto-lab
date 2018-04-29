@@ -1,12 +1,12 @@
 {
-  "name": "project-starter",
+  "name": "crypto-lab",
   "version": "0.1.0",
-  "description": "Project Starter",
+  "description": "A playground for crypto research and project tracking",
   "author": "Steven Salka <steven@ssalka.io>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ssalka/project-starter"
+    "url": "https://github.com/ssalka/crypto-lab"
   },
   "engines": {
     "node": "^8.9.0",
