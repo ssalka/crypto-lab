@@ -1,9 +1,12 @@
-export interface ICryptoAsset {
+export interface ICryptoAsset extends ICryptoAssetCustom, ICryptoCompareSchema {}
+
+export interface ICryptoAssetCustom {
   name: CryptoAsset;
   ticker: string;
   type: string;
-  IsTrading?: boolean;
 }
+
+interface ICryptoCompareSchema extends Pick<ICryptoCompareCoin, 'IsTrading'> {}
 
 export enum CryptoAsset {
   BTC = 'Bitcoin',

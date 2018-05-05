@@ -1,7 +1,10 @@
+import _ from 'lodash/fp';
 import React from 'react';
-import { CryptoAsset, ICryptoAsset } from 'src/client/interfaces';
 
-const coins: ICryptoAsset[] = [{
+import CryptoCompareAPI from 'src/client/api/CryptoCompare';
+import { CryptoAsset, ICryptoAsset, ICryptoAssetCustom, ICryptoCompareCoin } from 'src/client/interfaces';
+
+const coins: ICryptoAssetCustom[] = [{
   name: CryptoAsset.BTC,
   ticker: 'Bitcoin',
   type: 'Cryptocurrency'
@@ -21,12 +24,19 @@ interface ICryptoAssetTableState {
   loading: boolean;
 }
 
-const loadCoins = async (assets: CryptoAsset[]) => coins.filter(({ ticker }) => assets.includes(ticker as CryptoAsset));
+const cryptoCompare = new CryptoCompareAPI();
+
+const loadCoins = async (assets: CryptoAsset[]) => {
+  const ccCoinData: ICryptoCompareCoin[] = await cryptoCompare.getCoins(assets);
+  const ownCoinData: ICryptoAssetCustom[] = assets.map(asset => coins.find(({ ticker }) => ticker === asset));
+
+  return assets.map((asset, i) => ({ ...ownCoinData[i], ...ccCoinData[i] }));
+};
 
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
   static defaultProps: ICryptoAssetTableProps = {
     assets: [],
-    fieldOrder: ['name', 'ticker', 'type']
+    fieldOrder: ['name', 'ticker', 'type', 'IsTrading']
   };
 
   state: ICryptoAssetTableState = {
@@ -43,19 +53,25 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
     this.setState({ documents, loading: false });
   }
 
+  formatFieldName: (fieldName: string) => string = _.flow(
+    _.words,
+    _.map(_.capitalize),
+    _.join(' ')
+  );
+
   render() {
     const { fieldOrder } = this.props;
 
     return this.state.loading ? 'Loading...' : (
       <div style={{ ...styles.grid, gridTemplateColumns: `repeat(${fieldOrder.length}, minmax(100px, auto))` }}>
-        {fieldOrder.map(field => (
-          <strong key={field}>
-            {field.charAt(0).toUpperCase() + field.slice(1)}
+        {fieldOrder.map(this.formatFieldName).map(fieldName => (
+          <strong key={fieldName}>
+            {fieldName}
           </strong>
         ))}
-        {this.state.documents.map(doc => fieldOrder.map(field => (
-          <div key={field} style={styles.gridItem}>
-            {doc[field]}
+        {this.state.documents.map(asset => fieldOrder.map(field => (
+          <div key={field}>
+            {asset[field].toString()}
           </div>
         )))}
       </div>
@@ -68,6 +84,5 @@ const styles = {
     fontFamily: 'Arial',
     display: 'grid',
     gridRowGap: '1em'
-  },
-  gridItem: {}
+  }
 };
