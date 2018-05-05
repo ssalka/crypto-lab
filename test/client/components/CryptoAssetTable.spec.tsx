@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import CryptoAssetTable, { CryptoAsset } from 'src/client/components/CryptoAssetTable';
+import { CryptoAssetTable } from 'src/client/components';
+import { CryptoAsset } from 'src/client/interfaces';
 
 describe('CryptoAssetTable', () => {
   const { initialValue } = CryptoAssetTable.defaultProps;

@@ -1,15 +1,5 @@
 import React from 'react';
-
-interface ICryptoAsset {
-  name: CryptoAsset;
-  ticker: string;
-  type: string;
-}
-
-export const enum CryptoAsset {
-  BTC = 'Bitcoin',
-  ETH = 'Ethereum'
-}
+import { CryptoAsset, ICryptoAsset } from 'src/client/interfaces';
 
 const coins: ICryptoAsset[] = [{
   name: CryptoAsset.BTC,
