@@ -1,7 +1,7 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import CryptoCompareAPI from 'src/client/api/CryptoCompare';
+import CryptoCompareAPI from 'src/client/api/CryptoCompareAPI';
 import { CryptoAsset, ICryptoAsset, ICryptoAssetCustom, ICryptoCompareCoin } from 'src/client/interfaces';
 
 const coins: ICryptoAssetCustom[] = [{
