@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 
 import CryptoCompareAPI from './api/CryptoCompareAPI';
 import { CryptoAssetTable } from './components';
-import { ICryptoAssetCustom, ICryptoCompareCoin, CurrencyCode, ProjectName } from './interfaces';
+import { ICryptoAsset, ICryptoAssetCustom, ICryptoCompareCoin, CurrencyCode, ProjectName } from './interfaces';
 
 const coins: ICryptoAssetCustom[] = [{
   name: ProjectName.BTC,
@@ -14,9 +14,15 @@ const coins: ICryptoAssetCustom[] = [{
   name: ProjectName.ETH,
   ticker: CurrencyCode.Ethereum,
   type: 'Smart Contract Platform'
+}, {
+  name: ProjectName.LTC,
+  ticker: CurrencyCode.Litecoin,
+  type: 'Cryptocurrency'
 }];
 
 const coinsToLoad: ProjectName[] = _.map('name')(coins);
+
+const mergeLists = _.zipWith<ICryptoAssetCustom, ICryptoCompareCoin, ICryptoAsset>(_.assign);
 
 const loadCoins = async (assets: ProjectName[]) => {
   const cryptoCompare = new CryptoCompareAPI();
@@ -24,8 +30,6 @@ const loadCoins = async (assets: ProjectName[]) => {
 
   const ccCoinData: ICryptoCompareCoin[] = await cryptoCompare.getCoins();
   const ownCoinData: ICryptoAssetCustom[] = assets.map(asset => coins.find(({ name }) => name === asset));
-
-  const mergeLists = _.zipWith((ownData, ccData) => ({ ...ownData, ...ccData }));
 
   return mergeLists(ownCoinData, ccCoinData);
 };

@@ -2,8 +2,8 @@ export interface ICryptoAsset extends ICryptoAssetCustom, ICryptoCompareSchema {
 
 export interface ICryptoAssetCustom {
   name: ProjectName;
-  ticker: CurrencyCode;
-  type: string;
+  ticker?: CurrencyCode;
+  type?: string;
 }
 
 export interface ICryptoCompareSchema extends ICryptoCompareCoin {
@@ -13,13 +13,15 @@ export interface ICryptoCompareSchema extends ICryptoCompareCoin {
 export const enum ProjectName {
   USD = 'US Dollar',
   BTC = 'Bitcoin',
-  ETH = 'Ethereum'
+  ETH = 'Ethereum',
+  LTC = 'Litecoin'
 }
 
 export const enum CurrencyCode {
   Dollar = 'USD',
   Bitcoin = 'BTC',
-  Ethereum = 'ETH'
+  Ethereum = 'ETH',
+  Litecoin = 'LTC'
 }
 
 export interface ICryptoCompareResponse {
