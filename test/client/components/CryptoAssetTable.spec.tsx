@@ -5,10 +5,16 @@ import { CryptoAsset } from 'src/client/interfaces';
 
 describe('CryptoAssetTable', () => {
   const { initialValue } = CryptoAssetTable.defaultProps;
+  const loadCoins = async (coinNames: CryptoAsset[]) => coinNames.map(name => ({ name }));
+  let loaderSpy: jest.FunctionLike;
+
+  beforeEach(() => {
+    loaderSpy = jest.fn(loadCoins);
+  });
 
   describe('component mount & initial render', () => {
     it('mounts with the correct initial state', () => {
-      const table = shallow(<CryptoAssetTable />);
+      const table = shallow(<CryptoAssetTable loader={loaderSpy} />);
 
       expect(table.state()).toEqual({
         loading: true,
@@ -19,19 +25,17 @@ describe('CryptoAssetTable', () => {
     });
 
     it('starts loading the requested assets', async () => {
-      const loadSpy = spyOn(CryptoAssetTable.prototype, 'loadCryptoAssets');
-      const table = shallow(<CryptoAssetTable />);
+      const table = shallow(<CryptoAssetTable loader={loaderSpy} />);
 
       table.update();
-
-      expect(loadSpy).toHaveBeenCalled();
+      expect(loaderSpy).toHaveBeenCalled();
     });
   });
 
   describe('#loadCryptoAssets', () => {
     it('fetches requested data and updates component state', async () => {
       const assets = [CryptoAsset.BTC];
-      const table = shallow(<CryptoAssetTable assets={assets} />);
+      const table = shallow(<CryptoAssetTable assets={assets} loader={loaderSpy} />);
 
       await table.instance().loadCryptoAssets();
 
