@@ -17,4 +17,14 @@ describe('CryptoCompareAPI', () => {
       done();
     });
   });
+
+  describe('#getPrice', () => {
+    it('gets the current price of a given trading pair', async () => {
+      const api = new CryptoCompareAPI();
+
+      const price = await api.getPrice(CurrencyCode.Ethereum);
+
+      expect(price).toEqual(expect.any(Number));
+    });
+  });
 });

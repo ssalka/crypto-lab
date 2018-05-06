@@ -4,6 +4,8 @@ import { CurrencyCode, ProjectName, ICryptoCompareCoin, ICryptoCompareResponse }
 import _ from 'lodash/fp';
 
 export default class CryptoCompareAPI {
+  constructor(public base: CurrencyCode = CurrencyCode.Dollar) {}
+
   coins: ICryptoCompareCoin[] = [];
 
   async getCoins(coinNames: ProjectName[]): Promise<ICryptoCompareCoin[]> {
@@ -12,6 +14,12 @@ export default class CryptoCompareAPI {
     return coinNames
       .map(this.findByName)
       .filter(_.identity);
+  }
+
+  async getPrice(coin: CurrencyCode, base: CurrencyCode = this.base): Promise<number> {
+    const { [base]: price } = await cc.price(coin, base);
+
+    return price;
   }
 
   cacheCoins({ Data: coinsBySymbol }: ICryptoCompareResponse) {
