@@ -6,7 +6,9 @@ export interface ICryptoAssetCustom {
   type: string;
 }
 
-interface ICryptoCompareSchema extends Pick<ICryptoCompareCoin, 'IsTrading'> {}
+export interface ICryptoCompareSchema extends ICryptoCompareCoin {
+  price?: number;
+}
 
 export const enum ProjectName {
   USD = 'US Dollar',
