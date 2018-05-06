@@ -1,12 +1,12 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { CryptoAsset, ICryptoAsset } from 'src/client/interfaces';
+import { ICryptoAsset, ProjectName } from 'src/client/interfaces';
 
 interface ICryptoAssetTableProps {
-  assets: CryptoAsset[];
+  assets: ProjectName[];
   fieldOrder?: (keyof ICryptoAsset)[];
-  loader(assets: CryptoAsset[]): Promise<ICryptoAsset[]>;
+  loader(assets: ProjectName[]): Promise<ICryptoAsset[]>;
 }
 
 interface ICryptoAssetTableState {

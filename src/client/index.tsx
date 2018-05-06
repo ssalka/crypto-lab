@@ -3,21 +3,21 @@ import { render } from 'react-dom';
 
 import CryptoCompareAPI from './api/CryptoCompareAPI';
 import { CryptoAssetTable } from './components';
-import { CryptoAsset, ICryptoAssetCustom, ICryptoCompareCoin } from './interfaces';
+import { ICryptoAssetCustom, ICryptoCompareCoin, ProjectName } from './interfaces';
 
 const cryptoCompare = new CryptoCompareAPI();
 
 const coins: ICryptoAssetCustom[] = [{
-  name: CryptoAsset.BTC,
+  name: ProjectName.BTC,
   ticker: 'Bitcoin',
   type: 'Cryptocurrency'
 }, {
-  name: CryptoAsset.ETH,
+  name: ProjectName.ETH,
   ticker: 'Ethereum',
   type: 'Smart Contract Platform'
 }];
 
-const loadCoins = async (assets: CryptoAsset[]) => {
+const loadCoins = async (assets: ProjectName[]) => {
   const ccCoinData: ICryptoCompareCoin[] = await cryptoCompare.getCoins(assets);
   const ownCoinData: ICryptoAssetCustom[] = assets.map(asset => coins.find(({ ticker }) => ticker === asset));
 
@@ -26,7 +26,7 @@ const loadCoins = async (assets: CryptoAsset[]) => {
 
 render(
   <CryptoAssetTable
-    assets={[CryptoAsset.BTC, CryptoAsset.ETH]}
+    assets={[ProjectName.BTC, ProjectName.ETH]}
     loader={loadCoins}
   />,
   document.getElementById('root')

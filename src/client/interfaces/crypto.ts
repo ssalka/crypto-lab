@@ -1,14 +1,14 @@
 export interface ICryptoAsset extends ICryptoAssetCustom, ICryptoCompareSchema {}
 
 export interface ICryptoAssetCustom {
-  name: CryptoAsset;
+  name: ProjectName;
   ticker: string;
   type: string;
 }
 
 interface ICryptoCompareSchema extends Pick<ICryptoCompareCoin, 'IsTrading'> {}
 
-export enum CryptoAsset {
+export enum ProjectName {
   BTC = 'Bitcoin',
   ETH = 'Ethereum'
 }

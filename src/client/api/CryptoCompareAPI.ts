@@ -1,12 +1,12 @@
 import bind from 'bind-decorator';
 import cc from 'cryptocompare';
-import { CryptoAsset, ICryptoCompareCoin, ICryptoCompareResponse } from 'src/client/interfaces';
+import { ProjectName, ICryptoCompareCoin, ICryptoCompareResponse } from 'src/client/interfaces';
 import _ from 'lodash/fp';
 
 export default class CryptoCompareAPI {
   coins: ICryptoCompareCoin[] = [];
 
-  async getCoins(coinNames: CryptoAsset[]): Promise<ICryptoCompareCoin[]> {
+  async getCoins(coinNames: ProjectName[]): Promise<ICryptoCompareCoin[]> {
     this.cacheCoins(await cc.coinList());
 
     return coinNames
