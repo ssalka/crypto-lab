@@ -1,7 +1,7 @@
 import _ from 'lodash/fp';
 import cc from 'cryptocompare';
 import CryptoCompareAPI from 'src/client/api/CryptoCompareAPI';
-import { ProjectName } from 'src/client/interfaces';
+import { CurrencyCode, ProjectName } from 'src/client/interfaces';
 
 describe('CryptoCompareAPI', () => {
   describe('#getCoins', () => {

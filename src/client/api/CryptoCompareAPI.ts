@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
 import cc from 'cryptocompare';
-import { ProjectName, ICryptoCompareCoin, ICryptoCompareResponse } from 'src/client/interfaces';
+import { CurrencyCode, ProjectName, ICryptoCompareCoin, ICryptoCompareResponse } from 'src/client/interfaces';
 import _ from 'lodash/fp';
 
 export default class CryptoCompareAPI {
@@ -19,7 +19,7 @@ export default class CryptoCompareAPI {
   }
 
   @bind
-  findByName(CoinName: string): ICryptoCompareCoin {
-    return _.find({ CoinName }, this.coins);
+  findByName(CoinName: ProjectName): ICryptoCompareCoin {
+    return _.find({ CoinName } as ICryptoCompareCoin, this.coins);
   }
 }
