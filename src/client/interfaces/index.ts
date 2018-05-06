@@ -1,1 +1,2 @@
-export * from './CryptoAsset';
+export * from './crypto';
+export * from './CryptoCompare';

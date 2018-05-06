@@ -1,12 +1,12 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { CryptoAsset, ICryptoAsset } from 'src/client/interfaces';
+import { ICryptoAsset, ProjectName } from 'src/client/interfaces';
 
 interface ICryptoAssetTableProps {
-  assets: CryptoAsset[];
+  assets: ProjectName[];
   fieldOrder?: (keyof ICryptoAsset)[];
-  loader(assets: CryptoAsset[]): Promise<ICryptoAsset[]>;
+  loader(assets: ProjectName[]): Promise<ICryptoAsset[]>;
 }
 
 interface ICryptoAssetTableState {
@@ -17,7 +17,7 @@ interface ICryptoAssetTableState {
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
   static defaultProps: Pick<ICryptoAssetTableProps, 'assets' | 'fieldOrder'> = {
     assets: [],
-    fieldOrder: ['name', 'ticker', 'type', 'IsTrading']
+    fieldOrder: ['name', 'ticker', 'type', 'IsTrading', 'price']
   };
 
   state: ICryptoAssetTableState = {

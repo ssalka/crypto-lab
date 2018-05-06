@@ -1,16 +1,7 @@
-export interface ICryptoAsset extends ICryptoAssetCustom, ICryptoCompareSchema {}
+import { CurrencyCode, ProjectName } from './crypto';
 
-export interface ICryptoAssetCustom {
-  name: CryptoAsset;
-  ticker: string;
-  type: string;
-}
-
-interface ICryptoCompareSchema extends Pick<ICryptoCompareCoin, 'IsTrading'> {}
-
-export enum CryptoAsset {
-  BTC = 'Bitcoin',
-  ETH = 'Ethereum'
+export interface ICryptoCompareSchema extends ICryptoCompareCoin {
+  price?: number;
 }
 
 export interface ICryptoCompareResponse {
@@ -19,7 +10,7 @@ export interface ICryptoCompareResponse {
 
 export interface ICryptoCompareCoin {
   Algorithm: string;
-  CoinName: string;
+  CoinName: Exclude<ProjectName, ProjectName.USD>;
   FullName: string;
   FullyPremined: string;
   Id: string;
@@ -30,7 +21,7 @@ export interface ICryptoCompareCoin {
   ProofType: string;
   SortOrder: string;
   Sponsored: boolean;
-  Symbol: string;
+  Symbol: CurrencyCode;
   TotalCoinSupply: string;
   TotalCoinsFreeFloat: string;
   Url: string;
