@@ -18,6 +18,11 @@ export interface ICoinMarketCapCoin {
   total_supply: number;
 }
 
+export interface ICoinMarketCapSchema {
+  marketCap: number;
+  price: number;
+}
+
 export interface ICoinMarketCapResponse {
   Data: Record<string, ICoinMarketCapCoin>;
 }

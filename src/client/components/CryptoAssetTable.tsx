@@ -17,7 +17,7 @@ interface ICryptoAssetTableState {
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
   static defaultProps: Pick<ICryptoAssetTableProps, 'assets' | 'fieldOrder'> = {
     assets: [],
-    fieldOrder: ['name', 'ticker', 'type', 'IsTrading', 'price']
+    fieldOrder: ['name', 'ticker', 'type', 'IsTrading', 'price', 'marketCap']
   };
 
   state: ICryptoAssetTableState = {
