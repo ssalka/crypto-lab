@@ -1,30 +1,20 @@
-import _ from 'lodash/fp';
 import React from 'react';
 import { render } from 'react-dom';
 
+import AirtableAPI from './api/AirtableAPI';
 import CoinMarketCapAPI from './api/CoinMarketCapAPI';
 import CryptoCompareAPI from './api/CryptoCompareAPI';
 import { CryptoAssetTable } from './components';
-import { ICoinMarketCapCoin, ICryptoAsset, ICryptoAssetCustom, ICryptoCompareSchema, CurrencyCode, ProjectName } from './interfaces';
+import { IAirtableCoin, ICoinMarketCapCoin, ICryptoAsset, ICryptoCompareSchema, ProjectName } from './interfaces';
 
-const coins: ICryptoAssetCustom[] = [{
-  name: ProjectName.BTC,
-  ticker: CurrencyCode.Bitcoin,
-  type: 'Cryptocurrency'
-}, {
-  name: ProjectName.ETH,
-  ticker: CurrencyCode.Ethereum,
-  type: 'Smart Contract Platform'
-}, {
-  name: ProjectName.LTC,
-  ticker: CurrencyCode.Litecoin,
-  type: 'Cryptocurrency'
-}];
-
-const coinsToLoad: ProjectName[] = _.map('name')(coins);
+const coinsToLoad: ProjectName[] = [
+  ProjectName.BTC,
+  ProjectName.ETH,
+  ProjectName.LTC
+];
 
 function mergeLists(
-  ownData: ICryptoAssetCustom[],
+  ownData: IAirtableCoin[],
   cmcData: ICoinMarketCapCoin[],
   ccData: ICryptoCompareSchema[]
 ): ICryptoAsset[] {
@@ -44,15 +34,18 @@ function mergeLists(
 }
 
 const loadCoins = async (assets: ProjectName[]) => {
+  const airtable = new AirtableAPI();
+  airtable.setCoinList(assets);
+
   const cryptoCompare = new CryptoCompareAPI();
   cryptoCompare.setCoinList(assets);
 
   const coinMarketCap = new CoinMarketCapAPI();
   coinMarketCap.setCoinList(assets);
 
-  const ccCoinData: ICryptoCompareSchema[] = await cryptoCompare.getCoins();
+  const ownCoinData: IAirtableCoin[] = await airtable.getCoins();
   const cmcCoinData: ICoinMarketCapCoin[] = await coinMarketCap.getCoins();
-  const ownCoinData: ICryptoAssetCustom[] = assets.map(asset => coins.find(({ name }) => name === asset));
+  const ccCoinData: ICryptoCompareSchema[] = await cryptoCompare.getCoins();
 
   return mergeLists(ownCoinData, cmcCoinData, ccCoinData);
 };
