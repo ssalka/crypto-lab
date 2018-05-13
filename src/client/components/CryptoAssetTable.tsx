@@ -2,10 +2,13 @@ import _ from 'lodash/fp';
 import React from 'react';
 
 import { ICryptoAsset, ProjectName } from 'src/client/interfaces';
+import { formatUSD } from 'src/client/utils';
+
+type FieldName = keyof ICryptoAsset;
 
 interface ICryptoAssetTableProps {
   assets: ProjectName[];
-  fieldOrder?: (keyof ICryptoAsset)[];
+  fieldOrder?: FieldName[];
   loader(assets: ProjectName[]): Promise<ICryptoAsset[]>;
 }
 
@@ -14,10 +17,12 @@ interface ICryptoAssetTableState {
   loading: boolean;
 }
 
+const numericalFields: FieldName[] = ['price', 'marketCap'];
+
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
   static defaultProps: Pick<ICryptoAssetTableProps, 'assets' | 'fieldOrder'> = {
     assets: [],
-    fieldOrder: ['name', 'ticker', 'type', 'IsTrading', 'price', 'marketCap']
+    fieldOrder: ['name', 'ticker', 'type', 'IsTrading', ...numericalFields]
   };
 
   state: ICryptoAssetTableState = {
@@ -40,6 +45,12 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
     _.join(' ')
   );
 
+  formatFieldValue(value: string | number | boolean, key: FieldName) {
+    return numericalFields.includes(key)
+      ? formatUSD(value as string | number)
+      : value.toString();
+  }
+
   render() {
     const { fieldOrder } = this.props;
 
@@ -50,9 +61,9 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
             {fieldName}
           </strong>
         ))}
-        {this.state.documents.map(asset => fieldOrder.map(field => (
-          <div key={field}>
-            {asset[field] ? asset[field].toString() : '--'}
+        {this.state.documents.map(asset => fieldOrder.map(fieldName => (
+          <div key={fieldName}>
+            {asset[fieldName] ? this.formatFieldValue(asset[fieldName], fieldName) : '--'}
           </div>
         )))}
       </div>
