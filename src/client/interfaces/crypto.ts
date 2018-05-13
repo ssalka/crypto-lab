@@ -1,6 +1,7 @@
+import { ICoinMarketCapSchema } from './CoinMarketCap';
 import { ICryptoCompareSchema } from './CryptoCompare';
 
-export interface ICryptoAsset extends ICryptoAssetCustom, ICryptoCompareSchema {}
+export interface ICryptoAsset extends ICryptoAssetCustom, Pick<ICryptoCompareSchema, 'IsTrading'>, ICoinMarketCapSchema {}
 
 export interface ICryptoAssetCustom {
   name: ProjectName;

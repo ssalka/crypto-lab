@@ -8,7 +8,7 @@ export default class CryptoCompareAPI {
 
   requestedCoins: ProjectName[] = [];
 
-  coins: ICryptoCompareCoin[] = [];
+  coins: ICryptoCompareSchema[] = [];
 
   allCoins: ICryptoCompareResponse['Data'] = {};
 
@@ -16,7 +16,7 @@ export default class CryptoCompareAPI {
     this.requestedCoins = coinNames;
   }
 
-  async getCoins(): Promise<ICryptoCompareCoin[]> {
+  async getCoins(): Promise<ICryptoCompareSchema[]> {
     this.cacheCoins(await cc.coinList());
     this.updateCoinPrices(await this.getAllPrices());
 
@@ -49,7 +49,17 @@ export default class CryptoCompareAPI {
     this.coins = _.zipWith(this.updateCoinPrice)(this.coins, prices);
   }
 
-  updateCoinPrice = (coin: ICryptoCompareCoin, price: number): ICryptoCompareSchema => ({ ...coin, price });
+  @bind
+  updateCoinPrice(
+    { CoinName, IsTrading, ...coin }: ICryptoCompareCoin | ICryptoCompareSchema,
+    price: number
+  ): ICryptoCompareSchema {
+    return {
+      CoinName,
+      price,
+      IsTrading
+    };
+  }
 
   @bind
   findByName(CoinName: ProjectName): ICryptoCompareCoin {

@@ -2,9 +2,10 @@ import _ from 'lodash/fp';
 import React from 'react';
 import { render } from 'react-dom';
 
+import CoinMarketCapAPI from './api/CoinMarketCapAPI';
 import CryptoCompareAPI from './api/CryptoCompareAPI';
 import { CryptoAssetTable } from './components';
-import { ICryptoAsset, ICryptoAssetCustom, ICryptoCompareCoin, CurrencyCode, ProjectName } from './interfaces';
+import { ICoinMarketCapCoin, ICryptoAsset, ICryptoAssetCustom, ICryptoCompareSchema, CurrencyCode, ProjectName } from './interfaces';
 
 const coins: ICryptoAssetCustom[] = [{
   name: ProjectName.BTC,
@@ -22,16 +23,38 @@ const coins: ICryptoAssetCustom[] = [{
 
 const coinsToLoad: ProjectName[] = _.map('name')(coins);
 
-const mergeLists = _.zipWith<ICryptoAssetCustom, ICryptoCompareCoin, ICryptoAsset>(_.assign);
+function mergeLists(
+  ownData: ICryptoAssetCustom[],
+  cmcData: ICoinMarketCapCoin[],
+  ccData: ICryptoCompareSchema[]
+): ICryptoAsset[] {
+
+  return ownData
+    .map((coin, i) => ({
+      ownCoin: coin,
+      cmcCoin: cmcData[i],
+      ccCoin: ccData[i]
+    }))
+    .map(({ ownCoin, cmcCoin, ccCoin }): ICryptoAsset => ({
+      ...ownCoin,
+      IsTrading: ccCoin.IsTrading,
+      price: ccCoin.price || cmcCoin.price_usd,
+      marketCap: cmcCoin.market_cap_usd
+    }));
+}
 
 const loadCoins = async (assets: ProjectName[]) => {
   const cryptoCompare = new CryptoCompareAPI();
   cryptoCompare.setCoinList(assets);
 
-  const ccCoinData: ICryptoCompareCoin[] = await cryptoCompare.getCoins();
+  const coinMarketCap = new CoinMarketCapAPI();
+  coinMarketCap.setCoinList(assets);
+
+  const ccCoinData: ICryptoCompareSchema[] = await cryptoCompare.getCoins();
+  const cmcCoinData: ICoinMarketCapCoin[] = await coinMarketCap.getCoins();
   const ownCoinData: ICryptoAssetCustom[] = assets.map(asset => coins.find(({ name }) => name === asset));
 
-  return mergeLists(ownCoinData, ccCoinData);
+  return mergeLists(ownCoinData, cmcCoinData, ccCoinData);
 };
 
 render(
