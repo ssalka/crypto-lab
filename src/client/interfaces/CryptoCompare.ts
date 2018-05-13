@@ -1,6 +1,6 @@
 import { CurrencyCode, ProjectName } from './crypto';
 
-export interface ICryptoCompareSchema extends ICryptoCompareCoin {
+export interface ICryptoCompareSchema extends Pick<ICryptoCompareCoin, 'IsTrading'> {
   price?: number;
 }
 
