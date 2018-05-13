@@ -1,15 +1,14 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { ICryptoAsset, ProjectName } from 'src/client/interfaces';
+import { ICryptoAsset } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
 
 type FieldName = keyof ICryptoAsset;
 
 interface ICryptoAssetTableProps {
-  assets: ProjectName[];
   fieldOrder?: FieldName[];
-  loader(assets: ProjectName[]): Promise<ICryptoAsset[]>;
+  loader(): Promise<ICryptoAsset[]>;
 }
 
 interface ICryptoAssetTableState {
@@ -20,8 +19,7 @@ interface ICryptoAssetTableState {
 const numericalFields: FieldName[] = ['price', 'marketCap'];
 
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
-  static defaultProps: Pick<ICryptoAssetTableProps, 'assets' | 'fieldOrder'> = {
-    assets: [],
+  static defaultProps: Pick<ICryptoAssetTableProps, 'fieldOrder'> = {
     fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'IsTrading', ...numericalFields]
   };
 
@@ -35,7 +33,7 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
   }
 
   async loadCryptoAssets() {
-    const documents = await this.props.loader(this.props.assets);
+    const documents = await this.props.loader();
     this.setState({ documents, loading: false });
   }
 

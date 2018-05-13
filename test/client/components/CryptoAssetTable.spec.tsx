@@ -5,7 +5,8 @@ import { ProjectName } from 'src/client/interfaces';
 
 describe('CryptoAssetTable', () => {
   const { initialValue } = CryptoAssetTable.defaultProps;
-  const loadCoins = async (coinNames: ProjectName[]) => coinNames.map(name => ({ name }));
+  const coinNames = [ProjectName.BTC, ProjectName.ETH];
+  const loadCoins = async () => coinNames.map(name => ({ name }));
   let loaderSpy: jest.FunctionLike;
 
   beforeEach(() => {
@@ -34,8 +35,7 @@ describe('CryptoAssetTable', () => {
 
   describe('#loadCryptoAssets', () => {
     it('fetches requested data and updates component state', async () => {
-      const assets = [ProjectName.BTC];
-      const table = shallow(<CryptoAssetTable assets={assets} loader={loaderSpy} />);
+      const table = shallow(<CryptoAssetTable loader={loaderSpy} />);
 
       await table.instance().loadCryptoAssets();
 
@@ -44,7 +44,7 @@ describe('CryptoAssetTable', () => {
       const { documents, loading } = table.state();
 
       expect(loading).toBe(false);
-      expect(documents).toHaveLength(assets.length);
+      expect(documents).toHaveLength(coinNames.length);
     });
   });
 });
