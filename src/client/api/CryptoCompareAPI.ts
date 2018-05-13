@@ -51,10 +51,11 @@ export default class CryptoCompareAPI {
 
   @bind
   updateCoinPrice(
-    { IsTrading, ...coin }: ICryptoCompareCoin | ICryptoCompareSchema,
+    { CoinName, IsTrading, ...coin }: ICryptoCompareCoin | ICryptoCompareSchema,
     price: number
   ): ICryptoCompareSchema {
     return {
+      CoinName,
       price,
       IsTrading
     };
