@@ -1,21 +1,25 @@
 import { CurrencyCode, ProjectName } from './crypto';
 
 export interface ICoinMarketCapCoin {
-  '24h_volume_usd': number;
-  available_supply: number;
-  id: string;
-  last_updated: number;
-  market_cap_usd: number;
-  max_supply: number;
+  id: number;
   name: ProjectName;
-  percent_change_1h: number;
-  percent_change_7d: number;
-  percent_change_24h: number;
-  price_btc: number;
-  price_usd: number;
-  rank: number;
   symbol: CurrencyCode;
+  website_slug: string;
+  rank: number;
+  circulating_supply: number;
   total_supply: number;
+  max_supply: number;
+  quotes: {
+    USD: {
+      price: number;
+      volume_24h: number;
+      market_cap: number;
+      percent_change_1h: number;
+      percent_change_24h: number;
+      percent_change_7d: number;
+    }
+  };
+  last_updated: number;
 }
 
 export interface ICoinMarketCapSchema {
@@ -24,5 +28,5 @@ export interface ICoinMarketCapSchema {
 }
 
 export interface ICoinMarketCapResponse {
-  Data: Record<string, ICoinMarketCapCoin>;
+  data: Record<string, ICoinMarketCapCoin>;
 }

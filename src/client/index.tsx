@@ -38,8 +38,8 @@ function mergeLists(
     .map(({ ownCoin, cmcCoin, ccCoin }): ICryptoAsset => ({
       ...ownCoin,
       IsTrading: ccCoin.IsTrading,
-      price: ccCoin.price || cmcCoin.price_usd,
-      marketCap: cmcCoin.market_cap_usd
+      price: ccCoin.price || cmcCoin.quotes.USD.price,
+      marketCap: cmcCoin.quotes.USD.market_cap
     }));
 }
 
