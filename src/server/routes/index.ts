@@ -2,16 +2,16 @@ import CoinMarketCap from 'coinmarketcap-api';
 import express from 'express';
 import _ from 'lodash';
 
-import { indexHtml } from '../config';
+import { IAirtableCoin } from 'src/client/interfaces/Airtable';
 import { ICoinMarketCapResponse } from 'src/client/interfaces/CoinMarketCap';
-
-const mapValuesToNumbers = obj => _.mapValues(obj, _.toNumber);
+import { indexHtml } from '../config';
+import { getCoins } from './airtable';
 
 const cmc = new CoinMarketCap();
 
-
 const router = express.Router();
 
+router.get('/airtable', getCoins);
 
 router.get('/cmc', async (req, res) => {
   const { data }: ICoinMarketCapResponse = await cmc.getTicker();

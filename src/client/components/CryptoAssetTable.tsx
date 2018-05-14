@@ -1,15 +1,14 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { ICryptoAsset, ProjectName } from 'src/client/interfaces';
+import { ICryptoAsset } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
 
 type FieldName = keyof ICryptoAsset;
 
 interface ICryptoAssetTableProps {
-  assets: ProjectName[];
   fieldOrder?: FieldName[];
-  loader(assets: ProjectName[]): Promise<ICryptoAsset[]>;
+  loader(): Promise<ICryptoAsset[]>;
 }
 
 interface ICryptoAssetTableState {
@@ -20,9 +19,8 @@ interface ICryptoAssetTableState {
 const numericalFields: FieldName[] = ['price', 'marketCap'];
 
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
-  static defaultProps: Pick<ICryptoAssetTableProps, 'assets' | 'fieldOrder'> = {
-    assets: [],
-    fieldOrder: ['name', 'ticker', 'type', 'IsTrading', ...numericalFields]
+  static defaultProps: Pick<ICryptoAssetTableProps, 'fieldOrder'> = {
+    fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'IsTrading', ...numericalFields]
   };
 
   state: ICryptoAssetTableState = {
@@ -35,7 +33,7 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
   }
 
   async loadCryptoAssets() {
-    const documents = await this.props.loader(this.props.assets);
+    const documents = await this.props.loader();
     this.setState({ documents, loading: false });
   }
 
@@ -45,10 +43,21 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
     _.join(' ')
   );
 
-  formatFieldValue(value: string | number | boolean, key: FieldName) {
-    return numericalFields.includes(key)
-      ? formatUSD(value as string | number)
-      : value.toString();
+  formatFieldValue(value: any, key: FieldName) {
+    if (_.isArray(value)) {
+      return _.has('url', value[0])
+        ? <img src={value[0].url} style={styles.logo} />
+        : value.join(', ');
+    }
+    else if (_.isObject(value)) {
+      return JSON.stringify(value);
+    }
+    else if (numericalFields.includes(key)) {
+      return formatUSD(value);
+    }
+    else {
+      return _.isBoolean(value) ? value.toString() : value || '--';
+    }
   }
 
   render() {
@@ -63,7 +72,7 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
         ))}
         {this.state.documents.map(asset => fieldOrder.map(fieldName => (
           <div key={fieldName}>
-            {asset[fieldName] ? this.formatFieldValue(asset[fieldName], fieldName) : '--'}
+            {this.formatFieldValue(asset[fieldName], fieldName)}
           </div>
         )))}
       </div>
@@ -75,6 +84,11 @@ const styles = {
   grid: {
     fontFamily: 'Arial',
     display: 'grid',
-    gridRowGap: '1em'
+    gridRowGap: '0.5em',
+    alignItems: 'center'
+  },
+  logo: {
+    maxWidth: 30,
+    height: 'auto'
   }
 };

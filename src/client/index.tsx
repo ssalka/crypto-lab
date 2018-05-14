@@ -2,65 +2,43 @@ import _ from 'lodash/fp';
 import React from 'react';
 import { render } from 'react-dom';
 
+import AirtableAPI from './api/AirtableAPI';
 import CoinMarketCapAPI from './api/CoinMarketCapAPI';
 import CryptoCompareAPI from './api/CryptoCompareAPI';
 import { CryptoAssetTable } from './components';
-import { ICoinMarketCapCoin, ICryptoAsset, ICryptoAssetCustom, ICryptoCompareSchema, CurrencyCode, ProjectName } from './interfaces';
+import { ICoinMarketCapCoin, ICryptoAsset, ProjectName } from './interfaces';
 
-const coins: ICryptoAssetCustom[] = [{
-  name: ProjectName.BTC,
-  ticker: CurrencyCode.Bitcoin,
-  type: 'Cryptocurrency'
-}, {
-  name: ProjectName.ETH,
-  ticker: CurrencyCode.Ethereum,
-  type: 'Smart Contract Platform'
-}, {
-  name: ProjectName.LTC,
-  ticker: CurrencyCode.Litecoin,
-  type: 'Cryptocurrency'
-}];
+const loadCoins = async () => {
+  const airtable = new AirtableAPI();
+  await airtable.getCoins();
 
-const coinsToLoad: ProjectName[] = _.map('name')(coins);
+  const ownCoinData = airtable.allCoins;
+  const coinsToLoad: ProjectName[] = _.map('Name', ownCoinData);
 
-function mergeLists(
-  ownData: ICryptoAssetCustom[],
-  cmcData: ICoinMarketCapCoin[],
-  ccData: ICryptoCompareSchema[]
-): ICryptoAsset[] {
+  const cryptoCompare = new CryptoCompareAPI();
+  cryptoCompare.setCoinList(coinsToLoad);
 
-  return ownData
+  const coinMarketCap = new CoinMarketCapAPI();
+  coinMarketCap.setCoinList(coinsToLoad);
+
+  const cmcCoinData: ICoinMarketCapCoin[] = await coinMarketCap.getCoins();
+  await cryptoCompare.getCoins();
+
+  return ownCoinData
     .map((coin, i) => ({
       ownCoin: coin,
-      cmcCoin: cmcData[i],
-      ccCoin: ccData[i]
+      cmcCoin: coinMarketCap.allCoins[i] ? cmcCoinData[i] : null,
+      ccCoin: cryptoCompare.allCoins[coin.Symbol]
     }))
     .map(({ ownCoin, cmcCoin, ccCoin }): ICryptoAsset => ({
       ...ownCoin,
-      IsTrading: ccCoin.IsTrading,
-      price: ccCoin.price || cmcCoin.quotes.USD.price,
-      marketCap: cmcCoin.quotes.USD.market_cap
+      IsTrading: _.has('IsTrading', ccCoin) ? ccCoin.IsTrading : false,
+      price: _.get('quotes.USD.price', cmcCoin) || 0,
+      marketCap: _.get('quotes.USD.market_cap', cmcCoin) || ''
     }));
-}
-
-const loadCoins = async (assets: ProjectName[]) => {
-  const cryptoCompare = new CryptoCompareAPI();
-  cryptoCompare.setCoinList(assets);
-
-  const coinMarketCap = new CoinMarketCapAPI();
-  coinMarketCap.setCoinList(assets);
-
-  const ccCoinData: ICryptoCompareSchema[] = await cryptoCompare.getCoins();
-  const cmcCoinData: ICoinMarketCapCoin[] = await coinMarketCap.getCoins();
-  const ownCoinData: ICryptoAssetCustom[] = assets.map(asset => coins.find(({ name }) => name === asset));
-
-  return mergeLists(ownCoinData, cmcCoinData, ccCoinData);
 };
 
 render(
-  <CryptoAssetTable
-    assets={coinsToLoad}
-    loader={loadCoins}
-  />,
+  <CryptoAssetTable loader={loadCoins} />,
   document.getElementById('root')
 );

@@ -1,0 +1,35 @@
+import bind from 'bind-decorator';
+import _ from 'lodash/fp';
+
+import {
+  ProjectName,
+  IAirtableCoin
+} from 'src/client/interfaces';
+
+export default class AirtableAPI {
+  requestedCoins: ProjectName[] = [];
+
+  coins: IAirtableCoin[] = [];
+
+  allCoins: IAirtableCoin[] = [];
+
+  setCoinList(coinNames: ProjectName[]) {
+    this.requestedCoins = coinNames;
+  }
+
+  async getCoins(): Promise<IAirtableCoin[]> {
+    this.cacheCoins(await fetch('/airtable').then(_.invoke('json')));
+
+    return this.coins;
+  }
+
+  cacheCoins(allCoins: IAirtableCoin[]) {
+    this.allCoins = allCoins;
+    this.coins = _.compact(this.requestedCoins.map(this.findByName));
+  }
+
+  @bind
+  findByName(Name: ProjectName): IAirtableCoin {
+    return _.find({ Name } as Partial<IAirtableCoin>, this.allCoins);
+  }
+}
