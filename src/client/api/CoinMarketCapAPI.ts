@@ -3,20 +3,19 @@ import _ from 'lodash/fp';
 
 import {
   CurrencyCode,
-  ProjectName,
   ICoinMarketCapCoin
 } from 'src/client/interfaces';
 
 export default class CoinMarketCapAPI {
   constructor(public base: CurrencyCode = CurrencyCode.Dollar) {}
 
-  requestedCoins: ProjectName[] = [];
+  requestedCoins: CurrencyCode[] = [];
 
   coins: ICoinMarketCapCoin[] = [];
 
   allCoins: ICoinMarketCapCoin[] = [];
 
-  setCoinList(coinNames: ProjectName[]) {
+  setCoinList(coinNames: CurrencyCode[]) {
     this.requestedCoins = coinNames;
   }
 
@@ -32,7 +31,11 @@ export default class CoinMarketCapAPI {
   }
 
   @bind
-  findByName(name: ProjectName): ICoinMarketCapCoin {
-    return _.find({ name } as ICoinMarketCapCoin, this.allCoins);
+  findByName(symbol: CurrencyCode): ICoinMarketCapCoin {
+    const primarySymbol = symbol
+      .replace(/,.*$/g, '')
+      .replace(CurrencyCode.IOTA, 'MIOTA');
+
+    return _.find({ symbol: primarySymbol } as ICoinMarketCapCoin, this.allCoins);
   }
 }

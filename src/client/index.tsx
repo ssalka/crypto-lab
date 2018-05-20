@@ -6,7 +6,7 @@ import AirtableAPI from './api/AirtableAPI';
 import CoinMarketCapAPI from './api/CoinMarketCapAPI';
 import CryptoCompareAPI from './api/CryptoCompareAPI';
 import { CryptoAssetTable } from './components';
-import { ICoinMarketCapCoin, ICryptoAsset, ProjectName } from './interfaces';
+import { ICoinMarketCapCoin, ICryptoAsset } from './interfaces';
 
 const loadCoins = async () => {
   const airtable = new AirtableAPI();
@@ -14,13 +14,12 @@ const loadCoins = async () => {
   if (!await airtable.getCoins()) return [];
 
   const ownCoinData = airtable.allCoins;
-  const coinsToLoad: ProjectName[] = _.map('Name', ownCoinData);
 
   const cryptoCompare = new CryptoCompareAPI();
-  cryptoCompare.setCoinList(coinsToLoad);
+  cryptoCompare.setCoinList(_.map('Name', ownCoinData));
 
   const coinMarketCap = new CoinMarketCapAPI();
-  coinMarketCap.setCoinList(coinsToLoad);
+  coinMarketCap.setCoinList(_.map('Symbol', ownCoinData));
 
   const cmcCoinData: ICoinMarketCapCoin[] = await coinMarketCap.getCoins();
   await cryptoCompare.getCoins();

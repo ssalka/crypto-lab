@@ -8,14 +8,16 @@ export const enum ProjectName {
   USD = 'US Dollar',
   BTC = 'Bitcoin',
   ETH = 'Ethereum',
-  LTC = 'Litecoin'
+  LTC = 'Litecoin',
+  IOTA = 'IOTA'
 }
 
 export const enum CurrencyCode {
   Dollar = 'USD',
   Bitcoin = 'BTC',
   Ethereum = 'ETH',
-  Litecoin = 'LTC'
+  Litecoin = 'LTC',
+  IOTA = 'IOTA'
 }
 
 export const enum ProjectCategory {
