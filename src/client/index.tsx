@@ -10,7 +10,8 @@ import { ICoinMarketCapCoin, ICryptoAsset, ProjectName } from './interfaces';
 
 const loadCoins = async () => {
   const airtable = new AirtableAPI();
-  await airtable.getCoins();
+
+  if (!await airtable.getCoins()) return [];
 
   const ownCoinData = airtable.allCoins;
   const coinsToLoad: ProjectName[] = _.map('Name', ownCoinData);

@@ -18,7 +18,12 @@ export default class AirtableAPI {
   }
 
   async getCoins(): Promise<IAirtableCoin[]> {
-    this.cacheCoins(await fetch('/airtable').then(_.invoke('json')));
+    try {
+      this.cacheCoins(await fetch('/airtable').then(_.invoke('json')));
+    }
+    catch (e) {
+      console.error(e);
+    }
 
     return this.coins;
   }
