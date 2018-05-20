@@ -28,7 +28,7 @@ export default class CoinMarketCapAPI {
 
   cacheCoins(allCoins: ICoinMarketCapCoin[]) {
     this.allCoins = allCoins;
-    this.coins = _.compact(this.requestedCoins.map(this.findByName));
+    this.coins = this.requestedCoins.map(this.findByName);
   }
 
   @bind
