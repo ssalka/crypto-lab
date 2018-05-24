@@ -31,7 +31,9 @@ export default class CoinMarketCapAPI {
   }
 
   @bind
-  findByName(symbol: CurrencyCode): ICoinMarketCapCoin {
+  findByName(symbol?: CurrencyCode): ICoinMarketCapCoin {
+    if (!symbol) return;
+
     const primarySymbol = symbol
       .replace(/,.*$/g, '')
       .replace(CurrencyCode.IOTA, 'MIOTA');

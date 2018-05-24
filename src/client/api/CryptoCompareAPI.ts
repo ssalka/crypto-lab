@@ -37,9 +37,16 @@ export default class CryptoCompareAPI {
   async getPrice(coin: CurrencyCode, base: CurrencyCode = this.base): Promise<number> {
     if (!this.allCoins[coin] || !this.allCoins[coin].IsTrading) return 0;
 
-    const { [base]: price } = await cc.price(coin, base);
+    try {
+      const { [base]: price } = await cc.price(coin, base);
 
-    return price;
+      return price;
+    }
+    catch {
+      console.error('Unable to fetch price of', coin);
+
+      return 0;
+    }
   }
 
   cacheCoins({ Data: allCoins }: ICryptoCompareResponse) {
