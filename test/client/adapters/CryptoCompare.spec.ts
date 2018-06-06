@@ -1,13 +1,13 @@
 import _ from 'lodash/fp';
-import CryptoCompareAPI from 'src/client/api/CryptoCompareAPI';
+import CryptoCompareAdapter from 'src/client/adapters/CryptoCompareAdapter';
 import { CurrencyCode, ProjectName } from 'src/client/interfaces';
 
-describe('CryptoCompareAPI', () => {
-  let api: CryptoCompareAPI;
+describe('CryptoCompareAdapter', () => {
+  let api: CryptoCompareAdapter;
   const coinNames = [ProjectName.BTC, ProjectName.ETH];
 
   beforeEach(() => {
-    api = new CryptoCompareAPI();
+    api = new CryptoCompareAdapter();
     api.setCoinList(coinNames);
   });
 

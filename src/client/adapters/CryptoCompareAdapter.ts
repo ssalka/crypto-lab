@@ -3,7 +3,7 @@ import cc from 'cryptocompare';
 import { CurrencyCode, ProjectName, ICryptoCompareCoin, ICryptoCompareResponse, ICryptoCompareSchema } from 'src/client/interfaces';
 import _ from 'lodash/fp';
 
-export default class CryptoCompareAPI {
+export default class CryptoCompareAdapter {
   constructor(public base: CurrencyCode = CurrencyCode.Dollar) {}
 
   requestedCoins: ProjectName[] = [];

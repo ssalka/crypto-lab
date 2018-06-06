@@ -6,7 +6,7 @@ import {
   ICoinMarketCapCoin
 } from 'src/client/interfaces';
 
-export default class CoinMarketCapAPI {
+export default class CoinMarketCapAdapter {
   constructor(public base: CurrencyCode = CurrencyCode.Dollar) {}
 
   requestedCoins: CurrencyCode[] = [];

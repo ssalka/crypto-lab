@@ -6,7 +6,7 @@ import {
   IAirtableCoin
 } from 'src/client/interfaces';
 
-export default class AirtableAPI {
+export default class AirtableAdapter {
   requestedCoins: ProjectName[] = [];
 
   coins: IAirtableCoin[] = [];
