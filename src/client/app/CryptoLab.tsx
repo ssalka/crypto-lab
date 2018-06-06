@@ -1,8 +1,8 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { CryptoAssetTable } from './components';
-import { IAirtableCoin, ICoinMarketCapCoin, ICryptoCompareCoin, ICryptoAsset } from './interfaces';
+import { CryptoAssetTable } from 'src/client/components';
+import { IAirtableCoin, ICoinMarketCapCoin, ICryptoCompareCoin, ICryptoAsset } from 'src/client/interfaces';
 
 interface ILoaderResponse {
   airtable: IAirtableCoin;
@@ -28,12 +28,9 @@ export default class CryptoLab extends React.Component<ICryptoLabProps, ICryptoL
   };
 
   async componentDidMount() {
-    const coins = await this.props.loader();
-
-    this.setState({
-      coins: await this.mapToOwnSchema(coins),
-      loading: false
-    });
+    const response = await this.props.loader();
+    const coins = this.mapToOwnSchema(response);
+    this.setState({ coins, loading: false });
   }
 
   mapToOwnSchema(coins: ILoaderResponse[]): ICryptoAsset[] {

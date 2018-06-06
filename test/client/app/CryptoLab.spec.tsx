@@ -1,11 +1,11 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import CryptoLab from 'src/client/CryptoLab';
+import { CryptoLab, Loader } from 'src/client/app';
 import { ProjectName } from 'src/client/interfaces';
 
 describe('CryptoLab', () => {
   const coinNames = [ProjectName.BTC, ProjectName.ETH];
-  const loadCoins = async () => coinNames.map(name => ({ name }));
+  const loadCoins: Loader = async () => coinNames.map(name => ({ name }));
   let loaderSpy: jest.FunctionLike;
 
   beforeEach(() => {

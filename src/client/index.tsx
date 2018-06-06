@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import AirtableAdapter from './adapters/AirtableAdapter';
 import CoinMarketCapAdapter from './adapters/CoinMarketCapAdapter';
 import CryptoCompareAdapter from './adapters/CryptoCompareAdapter';
-import CryptoLab, { Loader } from './CryptoLab';
+import { CryptoLab, Loader } from './app';
 
 const loader: Loader = async () => {
   const airtable = new AirtableAdapter();
