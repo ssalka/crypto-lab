@@ -2,7 +2,6 @@ import CoinMarketCap from 'coinmarketcap-api';
 import { Router } from 'express';
 import _ from 'lodash/fp';
 
-import { IAirtableCoin } from 'src/client/interfaces/Airtable';
 import { ICoinMarketCapCoin, ICoinMarketCapResponse } from 'src/client/interfaces/CoinMarketCap';
 import { indexHtml } from '../config';
 import { getCoins } from './airtable';

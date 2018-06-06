@@ -1,8 +1,10 @@
 import { IAirtableCoin } from './Airtable';
-import { ICoinMarketCapSchema } from './CoinMarketCap';
-import { ICryptoCompareSchema } from './CryptoCompare';
+import { CoinMarketCapCoin } from './CoinMarketCap';
+import { ICryptoCompareCoin } from './CryptoCompare';
 
-export interface ICryptoAsset extends IAirtableCoin, Pick<ICryptoCompareSchema, 'IsTrading'>, ICoinMarketCapSchema {}
+export interface ICryptoAsset extends IAirtableCoin, CoinMarketCapCoin {
+  trading: ICryptoCompareCoin['IsTrading'];
+}
 
 export const enum ProjectName {
   USD = 'US Dollar',

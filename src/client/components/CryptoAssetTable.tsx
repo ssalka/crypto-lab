@@ -7,35 +7,17 @@ import { formatUSD } from 'src/client/utils';
 type FieldName = keyof ICryptoAsset;
 
 interface ICryptoAssetTableProps {
-  fieldOrder?: FieldName[];
-  loader(): Promise<ICryptoAsset[]>;
-}
-
-interface ICryptoAssetTableState {
-  documents: ICryptoAsset[];
+  coins: ICryptoAsset[];
   loading: boolean;
+  fieldOrder?: FieldName[];
 }
 
 const numericalFields: FieldName[] = ['price', 'marketCap'];
 
-export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps, ICryptoAssetTableState> {
+export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps> {
   static defaultProps: Pick<ICryptoAssetTableProps, 'fieldOrder'> = {
-    fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'IsTrading', ...numericalFields]
+    fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'trading', ...numericalFields]
   };
-
-  state: ICryptoAssetTableState = {
-    documents: [],
-    loading: true
-  };
-
-  componentDidMount() {
-    return this.loadCryptoAssets();
-  }
-
-  async loadCryptoAssets() {
-    const documents = await this.props.loader();
-    this.setState({ documents, loading: false });
-  }
 
   formatFieldName: (fieldName: string) => string = _.flow(
     _.words,
@@ -61,16 +43,16 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
   }
 
   render() {
-    const { fieldOrder } = this.props;
+    const { coins, loading, fieldOrder } = this.props;
 
-    return this.state.loading ? 'Loading...' : (
+    return loading ? 'Loading...' : (
       <div style={{ ...styles.grid, gridTemplateColumns: `repeat(${fieldOrder.length}, minmax(100px, auto))` }}>
         {fieldOrder.map(this.formatFieldName).map(fieldName => (
           <strong key={fieldName}>
             {fieldName}
           </strong>
         ))}
-        {this.state.documents.map(asset => fieldOrder.map(fieldName => (
+        {coins.map(asset => fieldOrder.map(fieldName => (
           <div key={fieldName}>
             {this.formatFieldValue(asset[fieldName], fieldName)}
           </div>
