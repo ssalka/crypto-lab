@@ -1,10 +1,9 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import { CryptoAssetTable } from 'src/client/components';
+import CryptoLab from 'src/client/CryptoLab';
 import { ProjectName } from 'src/client/interfaces';
 
-describe('CryptoAssetTable', () => {
-  const { initialValue } = CryptoAssetTable.defaultProps;
+describe('CryptoLab', () => {
   const coinNames = [ProjectName.BTC, ProjectName.ETH];
   const loadCoins = async () => coinNames.map(name => ({ name }));
   let loaderSpy: jest.FunctionLike;
@@ -15,36 +14,34 @@ describe('CryptoAssetTable', () => {
 
   describe('component mount & initial render', () => {
     it('mounts with the correct initial state', () => {
-      const table = shallow(<CryptoAssetTable loader={loaderSpy} />);
+      const lab = shallow(<CryptoLab loader={loaderSpy} />);
 
-      expect(table.state()).toEqual({
-        loading: true,
-        documents: []
-      });
+      const { coins, loading } = lab.state();
 
-      expect(table.text()).toBe('Loading...');
+      expect(coins).toHaveLength(0);
+      expect(loading).toBe(true);
     });
 
     it('starts loading the requested assets', async () => {
-      const table = shallow(<CryptoAssetTable loader={loaderSpy} />);
+      const lab = shallow(<CryptoLab loader={loaderSpy} />);
 
-      table.update();
+      lab.update();
       expect(loaderSpy).toHaveBeenCalled();
     });
   });
 
   describe('#loadCryptoAssets', () => {
     it('fetches requested data and updates component state', async () => {
-      const table = shallow(<CryptoAssetTable loader={loaderSpy} />);
+      const lab = shallow(<CryptoLab loader={loaderSpy} />);
 
-      await table.instance().loadCryptoAssets();
+      await lab.instance().componentDidMount();
 
-      table.instance().forceUpdate();
+      lab.instance().forceUpdate();
 
-      const { documents, loading } = table.state();
+      const { coins, loading } = lab.state();
 
+      expect(coins).toHaveLength(coinNames.length);
       expect(loading).toBe(false);
-      expect(documents).toHaveLength(coinNames.length);
     });
   });
 });

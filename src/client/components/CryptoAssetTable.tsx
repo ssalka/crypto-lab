@@ -7,7 +7,7 @@ import { formatUSD } from 'src/client/utils';
 type FieldName = keyof ICryptoAsset;
 
 interface ICryptoAssetTableProps {
-  documents: ICryptoAsset[];
+  coins: ICryptoAsset[];
   loading: boolean;
   fieldOrder?: FieldName[];
 }
@@ -43,7 +43,7 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
   }
 
   render() {
-    const { documents, loading, fieldOrder } = this.props;
+    const { coins, loading, fieldOrder } = this.props;
 
     return loading ? 'Loading...' : (
       <div style={{ ...styles.grid, gridTemplateColumns: `repeat(${fieldOrder.length}, minmax(100px, auto))` }}>
@@ -52,7 +52,7 @@ export default class CryptoAssetTable extends React.Component<ICryptoAssetTableP
             {fieldName}
           </strong>
         ))}
-        {documents.map(asset => fieldOrder.map(fieldName => (
+        {coins.map(asset => fieldOrder.map(fieldName => (
           <div key={fieldName}>
             {this.formatFieldValue(asset[fieldName], fieldName)}
           </div>
