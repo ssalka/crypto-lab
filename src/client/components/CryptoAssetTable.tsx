@@ -16,7 +16,7 @@ const numericalFields: FieldName[] = ['price', 'marketCap'];
 
 export default class CryptoAssetTable extends React.Component<ICryptoAssetTableProps> {
   static defaultProps: Pick<ICryptoAssetTableProps, 'fieldOrder'> = {
-    fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'IsTrading', ...numericalFields]
+    fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'trading', ...numericalFields]
   };
 
   formatFieldName: (fieldName: string) => string = _.flow(

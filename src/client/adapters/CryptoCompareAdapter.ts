@@ -1,14 +1,20 @@
 import bind from 'bind-decorator';
 import cc from 'cryptocompare';
-import { CurrencyCode, ProjectName, ICryptoCompareCoin, ICryptoCompareResponse, ICryptoCompareSchema } from 'src/client/interfaces';
 import _ from 'lodash/fp';
+
+import {
+  CryptoCompareCoin,
+  CurrencyCode,
+  ProjectName,
+  ICryptoCompareResponse
+} from 'src/client/interfaces';
 
 export default class CryptoCompareAdapter {
   constructor(public base: CurrencyCode = CurrencyCode.Dollar) {}
 
   requestedCoins: ProjectName[] = [];
 
-  coins: ICryptoCompareSchema[] = [];
+  coins: CryptoCompareCoin[] = [];
 
   allCoins: ICryptoCompareResponse['Data'] = {};
 
@@ -16,7 +22,7 @@ export default class CryptoCompareAdapter {
     this.requestedCoins = coinNames;
   }
 
-  async getCoins(): Promise<ICryptoCompareSchema[]> {
+  async getCoins(): Promise<CryptoCompareCoin[]> {
     this.cacheCoins(await cc.coinList());
     this.updateCoinPrices(await this.getAllPrices());
 
@@ -60,22 +66,19 @@ export default class CryptoCompareAdapter {
 
   @bind
   updateCoinPrice(
-    coin: ICryptoCompareCoin | ICryptoCompareSchema,
+    coin: CryptoCompareCoin,
     price: number
-  ): ICryptoCompareSchema {
-    if (!coin) return;
-
-    const { CoinName, IsTrading } = coin;
+  ): CryptoCompareCoin {
+    if (!coin) return coin;
 
     return {
-      CoinName,
-      price,
-      IsTrading
+      ...coin,
+      price
     };
   }
 
   @bind
-  findByName(CoinName: ProjectName): ICryptoCompareCoin {
-    return _.find({ CoinName } as ICryptoCompareCoin, this.allCoins);
+  findByName(CoinName: ProjectName): CryptoCompareCoin {
+    return _.find({ CoinName } as CryptoCompareCoin, this.allCoins);
   }
 }

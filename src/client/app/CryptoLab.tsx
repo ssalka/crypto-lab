@@ -29,7 +29,7 @@ export default class CryptoLab extends React.Component<ICryptoLabProps, ICryptoL
   mapToOwnSchema(coins: ILoaderResponse[]): ICryptoAsset[] {
     return coins.map(({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset => ({
       ...airtable,
-      IsTrading: _.has('IsTrading', cryptoCompare) ? cryptoCompare.IsTrading : false,
+      trading: _.has('IsTrading', cryptoCompare) ? cryptoCompare.IsTrading : false,
       price: _.get('quotes.USD.price', coinMarketCap) || 0,
       marketCap: _.get('quotes.USD.market_cap', coinMarketCap) || ''
     }));

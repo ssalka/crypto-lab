@@ -22,7 +22,7 @@ export interface ICoinMarketCapCoin {
   last_updated: number;
 }
 
-export interface ICoinMarketCapSchema {
+export interface ICoinMarketCapMetadata {
   marketCap: number;
   price: number;
 }
@@ -30,3 +30,5 @@ export interface ICoinMarketCapSchema {
 export interface ICoinMarketCapResponse {
   data: Record<string, ICoinMarketCapCoin>;
 }
+
+export type CoinMarketCapCoin = ICoinMarketCapMetadata;
