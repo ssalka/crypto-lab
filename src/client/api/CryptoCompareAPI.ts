@@ -51,7 +51,7 @@ export default class CryptoCompareAPI {
 
   cacheCoins({ Data: allCoins }: ICryptoCompareResponse) {
     this.allCoins = allCoins;
-    this.coins = _.compact(this.requestedCoins.map(this.findByName));
+    this.coins = this.requestedCoins.map(this.findByName);
   }
 
   updateCoinPrices(prices: number[]) {
@@ -60,9 +60,13 @@ export default class CryptoCompareAPI {
 
   @bind
   updateCoinPrice(
-    { CoinName, IsTrading, ...coin }: ICryptoCompareCoin | ICryptoCompareSchema,
+    coin: ICryptoCompareCoin | ICryptoCompareSchema,
     price: number
   ): ICryptoCompareSchema {
+    if (!coin) return;
+
+    const { CoinName, IsTrading } = coin;
+
     return {
       CoinName,
       price,
