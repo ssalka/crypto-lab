@@ -2,15 +2,8 @@ import _ from 'lodash/fp';
 import React from 'react';
 
 import { CryptoAssetTable } from 'src/client/components';
-import { IAirtableCoin, ICoinMarketCapCoin, ICryptoCompareCoin, ICryptoAsset } from 'src/client/interfaces';
-
-interface ILoaderResponse {
-  airtable: IAirtableCoin;
-  coinMarketCap: ICoinMarketCapCoin;
-  cryptoCompare: ICryptoCompareCoin;
-}
-
-export type Loader = () => Promise<ILoaderResponse[]>;
+import { ICryptoAsset } from 'src/client/interfaces';
+import { ILoaderResponse, Loader } from './loader';
 
 interface ICryptoLabProps {
   loader: Loader;
