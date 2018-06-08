@@ -20,6 +20,8 @@
     "test": "NODE_ENV=test NODE_PATH=. jest -c config/jest.json --noStackTrace"
   },
   "dependencies": {
+    "@material-ui/core": "^1.2.0",
+    "@material-ui/icons": "^1.1.0",
     "airtable": "^0.5.4",
     "bind-decorator": "^1.0.11",
     "body-parser": "^1.18.2",
