@@ -27,6 +27,7 @@
     "newline-before-return": true,
     "no-angle-bracket-type-assertion": true,
     "no-console": false,
+    "no-namespace": false,
     "no-duplicate-case": true,
     "no-sparse-arrays": true,
     "no-unused-expression": true,
