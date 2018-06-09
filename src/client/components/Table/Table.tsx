@@ -1,11 +1,14 @@
 import _ from 'lodash/fp';
-import React, { ComponentType } from 'react';
-import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
+import React, { ComponentType, ReactNode } from 'react';
+
 import Table, { TableClassKey } from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell, { SortDirection } from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+
+import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
+import CheckIcon from '@material-ui/icons/Check';
 
 import { ICryptoAsset } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
@@ -112,7 +115,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     this.setState({ rowsPerPage: event.target.value });
   }
 
-  formatFieldValue(value: any, key: FieldName) {
+  formatFieldValue(value: any, key: FieldName): ReactNode {
     if (_.isArray(value)) {
       return _.has('url', value[0])
         ? <img src={value[0].url} className={this.props.classes.logo} />
@@ -125,7 +128,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
       return formatUSD(value);
     }
     else {
-      return _.isBoolean(value) ? value.toString() : value || '--';
+      return _.isBoolean(value) ? value && <CheckIcon color="secondary" /> : value || '--';
     }
   }
 
