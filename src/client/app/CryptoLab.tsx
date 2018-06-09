@@ -1,7 +1,7 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { Table } from 'src/client/components';
+import { Table, Toolbar } from 'src/client/components';
 import { ICryptoAsset } from 'src/client/interfaces';
 import { ILoaderResponse, Loader } from './loader';
 
@@ -38,15 +38,11 @@ export default class CryptoLab extends React.Component<ICryptoLabProps, ICryptoL
   render() {
     return (
       <React.Fragment>
-        <header>
-          <h1>Crypto Lab</h1>
-        </header>
-        <main>
-          <Table
-            data={this.state.coins}
-            loading={this.state.loading}
-          />
-        </main>
+        <Toolbar title="Crypto Lab" />
+        <Table
+          data={this.state.coins}
+          loading={this.state.loading}
+        />
       </React.Fragment>
     );
   }

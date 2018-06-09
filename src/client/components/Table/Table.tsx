@@ -11,7 +11,6 @@ import Paper from '@material-ui/core/Paper';
 import { ICryptoAsset } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
 import TableHead from './TableHead';
-import TableToolbar from './TableToolbar';
 
 const numericalFields: FieldName[] = ['price', 'marketCap'];
 
@@ -142,7 +141,6 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
 
     return (
       <Paper className={classes.root}>
-        <TableToolbar title="Crypto Lab" />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <TableHead
