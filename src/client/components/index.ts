@@ -1,5 +1,1 @@
-import CryptoAssetTable from './CryptoAssetTable';
-
-export {
-  CryptoAssetTable
-};
+export { Table } from './Table';
