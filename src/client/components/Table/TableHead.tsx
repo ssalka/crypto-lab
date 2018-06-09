@@ -6,6 +6,8 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import TableHeaderMenu, { ITableHeaderMenuProps } from './TableHeaderMenu';
+
 interface ITableHeader {
   id: string;
   label: string;
@@ -17,9 +19,14 @@ interface ITableHeadProps {
   order: SortDirection;
   orderBy: string;
   onRequestSort(event, orderBy: string): void;
+  options?: ITableHeaderMenuProps['items'];
 }
 
 export default class EnhancedTableHead extends React.Component<ITableHeadProps> {
+  static defaultProps = {
+    options: []
+  };
+
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
   }
@@ -31,7 +38,7 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
   );
 
   render() {
-    const { headers, order, orderBy } = this.props;
+    const { headers, options, order, orderBy } = this.props;
 
     return (
       <TableHead>
@@ -42,19 +49,28 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
               numeric={numeric}
               sortDirection={(orderBy === id && order) as SortDirection}
             >
-              <Tooltip
-                title="Sort"
-                placement={numeric ? 'bottom-end' : 'bottom-start'}
-                enterDelay={300}
-              >
-                <TableSortLabel
-                  active={!!order && orderBy === id}
-                  direction={order as Exclude<SortDirection, false>}
-                  onClick={this.createSortHandler(id)}
+              <div style={styles.header}>
+                <Tooltip
+                  title="Sort"
+                  placement={numeric ? 'bottom-end' : 'bottom-start'}
+                  enterDelay={300}
                 >
-                  {this.formatFieldName(label)}
-                </TableSortLabel>
-              </Tooltip>
+                  <TableSortLabel
+                    active={!!order && orderBy === id}
+                    direction={order as Exclude<SortDirection, false>}
+                    onClick={this.createSortHandler(id)}
+                  >
+                    {this.formatFieldName(label)}
+                  </TableSortLabel>
+                </Tooltip>
+
+                {!_.isEmpty(options) && (
+                  <TableHeaderMenu
+                    header={id}
+                    items={options}
+                  />
+                )}
+              </div>
             </TableCell>
           ))}
         </TableRow>
@@ -62,3 +78,11 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
     );
   }
 }
+
+const styles = {
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  }
+};
