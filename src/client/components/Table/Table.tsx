@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell, { SortDirection } from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 
 import { ICryptoAsset } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
@@ -16,18 +15,15 @@ const numericalFields: FieldName[] = ['price', 'marketCap'];
 
 type FieldName = keyof ICryptoAsset;
 
-type TableClassName = TableClassKey | 'tableWrapper' | 'table' | 'logo';
+type TableClassName = TableClassKey | 'table' | 'logo';
 
 const styles: StyleRulesCallback<TableClassName> = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3
+    overflowX: 'auto'
   },
   table: {
-    minWidth: 1020
-  },
-  tableWrapper: {
-    overflowX: 'auto'
+    minWidth: Math.min(1020, window.innerWidth)
   },
   logo: {
     maxWidth: 30,
@@ -53,7 +49,7 @@ type TableProps = ITableProps & WithStyles<TableClassName>;
 
 const initialState: Pick<ITableState, 'order' | 'page' | 'rowsPerPage'> = {
   page: 0,
-  rowsPerPage: 10
+  rowsPerPage: 25
 };
 
 class EnhancedTable extends React.Component<TableProps, ITableState> {
@@ -140,11 +136,11 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     const [firstField, ...otherFields] = fieldOrder;
 
     return (
-      <Paper className={classes.root}>
-        <div className={classes.tableWrapper}>
+      <React.Fragment>
+        <div className={classes.root}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <TableHead
-              headers={fieldOrder.map(field => ({ id: field, label: field, numeric: false }))}
+              headers={fieldOrder.map(field => ({ id: field, label: field }))}
               order={order}
               orderBy={orderBy}
               onRequestSort={this.handleRequestSort}
@@ -176,6 +172,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[10, 25, 50, 100]}
           page={page}
           backIconButtonProps={{
             'aria-label': 'Previous Page'
@@ -186,7 +183,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
           onChangePage={this.changePage}
           onChangeRowsPerPage={this.changePageSize}
         />
-      </Paper>
+      </React.Fragment>
     );
   }
 }

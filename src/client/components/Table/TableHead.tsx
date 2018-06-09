@@ -9,7 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 interface ITableHeader {
   id: string;
   label: string;
-  numeric: boolean;
+  numeric?: boolean;
 }
 
 interface ITableHeadProps {
@@ -36,7 +36,7 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
     return (
       <TableHead>
         <TableRow>
-          {headers.map(({ id, numeric, label }) => (
+          {headers.map(({ id, label, numeric = false }) => (
             <TableCell
               key={id}
               numeric={numeric}
