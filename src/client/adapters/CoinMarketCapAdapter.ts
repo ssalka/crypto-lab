@@ -38,6 +38,6 @@ export default class CoinMarketCapAdapter {
       .replace(/,.*$/g, '')
       .replace(CurrencyCode.IOTA, 'MIOTA');
 
-    return _.find({ symbol: primarySymbol } as CoinMarketCapCoin, this.allCoins);
+    return _.find({ symbol: primarySymbol } as Partial<CoinMarketCapCoin>, this.allCoins);
   }
 }
