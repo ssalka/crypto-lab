@@ -4,6 +4,7 @@ import React from 'react';
 import { Table, Header } from 'src/client/components';
 import { ICryptoAsset } from 'src/client/interfaces';
 import { ILoaderResponse, Loader } from './loader';
+import Theme from './Theme';
 
 interface ICryptoLabProps {
   loader: Loader;
@@ -37,13 +38,13 @@ export default class CryptoLab extends React.Component<ICryptoLabProps, ICryptoL
 
   render() {
     return (
-      <React.Fragment>
+      <Theme type="light">
         <Header title="Crypto Lab" />
         <Table
           data={this.state.coins}
           loading={this.state.loading}
         />
-      </React.Fragment>
+      </Theme>
     );
   }
 }

@@ -8,7 +8,7 @@ interface IAppHeaderProps {
 }
 
 const Header: SFC<IAppHeaderProps> = ({ title }) => (
-  <AppBar position="sticky" color="default">
+  <AppBar position="sticky" color="primary">
      <Toolbar>
        <Typography variant="title" color="inherit">
          {title}
