@@ -14,13 +14,15 @@ interface ICryptoLabProps {
   loader: Loader;
 }
 
-interface ICryptoLabState {
+export interface ICryptoLabState {
   coins: ICryptoAsset[];
   drawerOpen: boolean;
   loading: boolean;
 }
 
-class CryptoLab extends React.Component<ICryptoLabProps & WithStyles<CryptoLabClassName>, ICryptoLabState> {
+export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
+
+export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> {
   state = {
     coins: [],
     drawerOpen: false,
