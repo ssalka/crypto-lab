@@ -31,7 +31,7 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
     this.props.onRequestSort(event, property);
   }
 
-  formatFieldName: (fieldName: string) => string = _.flow(
+  formatHeaderName: (headerName: string) => string = _.flow(
     _.words,
     _.map(_.capitalize),
     _.join(' ')
@@ -60,7 +60,7 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
                     direction={order as Exclude<SortDirection, false>}
                     onClick={this.createSortHandler(id)}
                   >
-                    {this.formatFieldName(label)}
+                    {this.formatHeaderName(label)}
                   </TableSortLabel>
                 </Tooltip>
 

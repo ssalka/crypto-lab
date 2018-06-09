@@ -14,35 +14,25 @@ import { ICryptoAsset } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
 import TableHead from './TableHead';
 
-const numericalFields: FieldName[] = ['price', 'marketCap'];
+namespace columns {
+  export const currency: FieldName[] = ['price', 'marketCap'];
+  export const numerical: FieldName[] = ['Rank'];
+  export const defaultOrder: FieldName[] = ['Logo', 'Rank', 'Name', 'Symbol', 'Category', 'trading', ...currency];
+}
 
 type FieldName = keyof ICryptoAsset;
 
-type TableClassName = TableClassKey | 'table' | 'logo';
-
-const styles: StyleRulesCallback<TableClassName> = theme => ({
-  root: {
-    width: '100%',
-    overflowX: 'auto'
-  },
-  table: {
-    minWidth: Math.min(1020, window.innerWidth)
-  },
-  logo: {
-    maxWidth: 30,
-    height: 'auto'
-  }
-});
+type TableClassName = TableClassKey | 'table' | 'logo' | 'paginator';
 
 interface ITableProps {
   data: ICryptoAsset[];
   loading: boolean;
-  fieldOrder?: FieldName[];
+  columnOrder?: FieldName[];
 }
 
 interface ITableState {
   order?: SortDirection;
-  orderBy: string;
+  orderBy?: string;
   data: ICryptoAsset[];
   page: number;
   rowsPerPage: number;
@@ -57,19 +47,18 @@ const initialState: Pick<ITableState, 'order' | 'page' | 'rowsPerPage'> = {
 
 class EnhancedTable extends React.Component<TableProps, ITableState> {
   static defaultProps = {
-    fieldOrder: ['Logo', 'Name', 'Symbol', 'Category', 'trading', ...numericalFields] as FieldName[]
+    columnOrder: columns.defaultOrder
   };
 
   idKey = 'Name';
 
   state: ITableState = {
-    orderBy: this.idKey,
-    data: this.props.data,
-    ...initialState
+    ...initialState,
+    data: this.props.data
   };
 
   compareItems = (prev, next) => {
-    return prev[this.idKey] === next[this.idKey];
+    return prev[this.state.orderBy] === next[this.state.orderBy];
   }
 
   dataChanged(prevData, nextData) {
@@ -115,35 +104,49 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     this.setState({ rowsPerPage: event.target.value });
   }
 
-  formatFieldValue(value: any, key: FieldName): ReactNode {
+  formatCellValue(value: any, key: FieldName): ReactNode {
+    let formattedValue: ReactNode;
+
     if (_.isArray(value)) {
-      return _.has('url', value[0])
+      formattedValue = _.has('url', value[0])
         ? <img src={value[0].url} className={this.props.classes.logo} />
         : value.join(', ');
     }
     else if (_.isObject(value)) {
-      return JSON.stringify(value);
+      formattedValue = JSON.stringify(value);
     }
-    else if (numericalFields.includes(key)) {
-      return formatUSD(value);
+    else if (columns.currency.includes(key)) {
+      formattedValue = formatUSD(value);
+    }
+    else if (_.isBoolean(value)) {
+      formattedValue = value && <CheckIcon color="secondary" />;
+    }
+    else if (_.isNumber(value)) {
+      formattedValue = value.toString();
     }
     else {
-      return _.isBoolean(value) ? value && <CheckIcon color="secondary" /> : value || '--';
+      formattedValue = value || '';
     }
+
+    return formattedValue;
+  }
+
+  getEmptyRowCount({ data, page, rowsPerPage } = this.state): number {
+    return rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
   }
 
   render() {
-    const { classes, fieldOrder } = this.props;
+    const { classes, columnOrder } = this.props;
     const { data, order, orderBy, page, rowsPerPage } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-    const [firstField, ...otherFields] = fieldOrder;
+    const [firstField, ...otherFields] = columnOrder;
+    const emptyRows = this.getEmptyRowCount();
 
     return (
       <React.Fragment>
         <div className={classes.root}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <TableHead
-              headers={fieldOrder.map(field => ({ id: field, label: field }))}
+              headers={columnOrder.map(field => ({ id: field, label: field }))}
               order={order}
               orderBy={orderBy}
               onRequestSort={this.handleRequestSort}
@@ -152,14 +155,13 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => (
                 <TableRow
                   hover={true}
-                  tabIndex={-1}
                   key={n[this.idKey]}
                 >
                   <TableCell component="th" scope="row">
-                    {this.formatFieldValue(n[firstField], firstField)}
+                    {this.formatCellValue(n[firstField], firstField)}
                   </TableCell>
                   {otherFields.map(field => (
-                    <TableCell key={field}>{this.formatFieldValue(n[field], field)}</TableCell>
+                    <TableCell key={field}>{this.formatCellValue(n[field], field)}</TableCell>
                   ))}
                 </TableRow>
               ))}
@@ -172,6 +174,9 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
           </Table>
         </div>
         <TablePagination
+          classes={{
+            root: classes.paginator
+          }}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}
@@ -191,4 +196,20 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
   }
 }
 
+const styles: StyleRulesCallback<TableClassName> = theme => ({
+  root: {
+    width: '100%',
+    overflowX: 'auto'
+  },
+  table: {
+    minWidth: Math.min(1020, window.innerWidth)
+  },
+  logo: {
+    maxWidth: 30,
+    height: 'auto'
+  },
+  paginator: {
+    backgroundColor: theme.palette.grey[200]
+  }
+});
 export default withStyles(styles)(EnhancedTable) as ComponentType<ITableProps>;
