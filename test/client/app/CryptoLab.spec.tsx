@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { CryptoLab, Loader } from 'src/client/app';
+import { CryptoLab, CryptoLabProps, ICryptoLabProps } from 'src/client/app/CryptoLab';
+import { Loader } from 'src/client/app/loader';
 import { ProjectName } from 'src/client/interfaces';
 
 describe('CryptoLab', () => {
@@ -8,37 +9,45 @@ describe('CryptoLab', () => {
   const loadCoins: Loader = async () => coinNames.map(name => ({ name }));
   let loaderSpy: jest.FunctionLike;
 
+  let cryptoLab: ReturnType<typeof getComponent>;
+
+  function getComponent(props: Partial<ICryptoLabProps> = { loader: loaderSpy }) {
+    return shallow<CryptoLabProps, ICryptoLabState>(
+      <CryptoLab classes={{}} {...props} />
+    );
+  }
+
   beforeEach(() => {
     loaderSpy = jest.fn(loadCoins);
   });
 
   describe('component mount & initial render', () => {
     it('mounts with the correct initial state', () => {
-      const lab = shallow(<CryptoLab loader={loaderSpy} />);
+      cryptoLab = getComponent();
 
-      const { coins, loading } = lab.state();
+      const { coins, loading } = cryptoLab.state();
 
       expect(coins).toHaveLength(0);
       expect(loading).toBe(true);
     });
 
     it('starts loading the requested assets', async () => {
-      const lab = shallow(<CryptoLab loader={loaderSpy} />);
+      cryptoLab = getComponent();
 
-      lab.update();
+      cryptoLab.update();
       expect(loaderSpy).toHaveBeenCalled();
     });
   });
 
   describe('#loadCryptoAssets', () => {
     it('fetches requested data and updates component state', async () => {
-      const lab = shallow(<CryptoLab loader={loaderSpy} />);
+      cryptoLab = getComponent();
 
-      await lab.instance().componentDidMount();
+      await cryptoLab.instance().componentDidMount();
 
-      lab.instance().forceUpdate();
+      cryptoLab.instance().forceUpdate();
 
-      const { coins, loading } = lab.state();
+      const { coins, loading } = cryptoLab.state();
 
       expect(coins).toHaveLength(coinNames.length);
       expect(loading).toBe(false);

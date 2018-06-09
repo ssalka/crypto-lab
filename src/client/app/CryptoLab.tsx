@@ -1,22 +1,31 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { CryptoAssetTable } from 'src/client/components';
+import { Table, Header, SideDrawer } from 'src/client/components';
 import { ICryptoAsset } from 'src/client/interfaces';
 import { ILoaderResponse, Loader } from './loader';
+import Theme from './Theme';
+
+import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
+
+type CryptoLabClassName = 'root' | 'main';
 
 interface ICryptoLabProps {
   loader: Loader;
 }
 
-interface ICryptoLabState {
+export interface ICryptoLabState {
   coins: ICryptoAsset[];
+  drawerOpen: boolean;
   loading: boolean;
 }
 
-export default class CryptoLab extends React.Component<ICryptoLabProps, ICryptoLabState> {
+export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
+
+export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> {
   state = {
     coins: [],
+    drawerOpen: false,
     loading: true
   };
 
@@ -35,16 +44,51 @@ export default class CryptoLab extends React.Component<ICryptoLabProps, ICryptoL
     }));
   }
 
+  toggleSideDrawer = () => {
+    this.setState(prevState => ({
+      drawerOpen: !prevState.drawerOpen
+    }));
+  }
+
   render() {
+    const { classes } = this.props;
+    const { coins, drawerOpen, loading } = this.state;
+
     return (
-      <React.Fragment>
-        <header>
-          <h1>Crypto Lab</h1>
-        </header>
-        <main>
-          <CryptoAssetTable {...this.state} />
-        </main>
-      </React.Fragment>
+      <Theme type="light">
+        <Header
+          title="Crypto Lab"
+          menuOpen={drawerOpen}
+          onMenuToggle={this.toggleSideDrawer}
+        />
+        <div className={classes.root}>
+          <SideDrawer
+            open={drawerOpen}
+            onClose={this.toggleSideDrawer}
+          />
+          <main className={classes.main}>
+            <Table
+              data={coins}
+              loading={loading}
+            />
+          </main>
+        </div>
+      </Theme>
     );
   }
 }
+
+const styles: StyleRulesCallback<CryptoLabClassName> = theme => ({
+  root: {
+    display: 'flex',
+    maxWidth: '100vw',
+    maxHeight: 'calc(100vh - 56px)',
+    overflow: 'hidden'
+  },
+  main: {
+    flexGrow: 1,
+    overflow: 'auto'
+  },
+});
+
+export default withStyles(styles)(CryptoLab);

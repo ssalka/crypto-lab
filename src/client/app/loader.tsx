@@ -5,13 +5,13 @@ import CoinMarketCapAdapter from 'src/client/adapters/CoinMarketCapAdapter';
 import CryptoCompareAdapter from 'src/client/adapters/CryptoCompareAdapter';
 import {
   IAirtableCoin,
-  ICoinMarketCapCoin,
+  ICoinMarketCapMetadata,
   ICryptoCompareCoin
 } from 'src/client/interfaces';
 
 interface ILoaderResponse {
   airtable: IAirtableCoin;
-  coinMarketCap: ICoinMarketCapCoin;
+  coinMarketCap: ICoinMarketCapMetadata;
   cryptoCompare: ICryptoCompareCoin;
 }
 
