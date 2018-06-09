@@ -27,6 +27,11 @@ class Theme extends React.Component<IThemeProps, IThemeState> {
     }
   }
 
+  componentDidMount() {
+    // TODO: add Sass
+    document.body.style.overflow = 'hidden';
+  }
+
   state: IThemeState = {
     theme: Theme[this.props.type],
     type: this.props.type
