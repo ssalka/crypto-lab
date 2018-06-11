@@ -34,6 +34,27 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     }
   };
 
+  static views = {
+    [ViewName.Coins]: {
+      [ViewType.Table]: (props, state) => ({
+        data: state.coins,
+        loading: state.loading
+      })
+    }
+  };
+
+  getViewProps({ name, type }: IView) {
+    if (_.has(`${name}.${type}`, CryptoLab.views)) {
+      const getProps = CryptoLab.views[name][type];
+
+      return getProps(this.props, this.state);
+    }
+
+    console.warn('Unsupported view options:', { name, type });
+
+    return null;
+  }
+
   async componentDidMount() {
     const response = await this.props.loader();
     const coins = this.mapToOwnSchema(response);
@@ -59,18 +80,12 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     view: { name, type }
   })
 
-  View = ({ type }) => {
-    switch (type) {
-      case ViewType.Table: {
-        const { coins, loading } = this.state;
+  View = (view: IView): JSX.Element => {
+    const props = this.getViewProps(view);
 
-        return (
-          <Table
-            data={coins}
-            loading={loading}
-          />
-        );
-      }
+    switch (view.type) {
+      case ViewType.Table:
+        return <Table {...props} />;
     }
   }
 
@@ -94,7 +109,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
             selectedView={view}
           />
           <main className={classes.main}>
-            <View type={view.type} />
+            <View {...view} />
           </main>
         </div>
       </Theme>
