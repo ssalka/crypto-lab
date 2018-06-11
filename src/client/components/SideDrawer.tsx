@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import _ from 'lodash/fp';
 import React from 'react';
 
 import Checkbox from '@material-ui/core/Checkbox';
@@ -11,16 +12,20 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 import MoneyIcon from '@material-ui/icons/MonetizationOn';
+import TableIcon from '@material-ui/icons/List';
 
-type SideDrawerClassName = Extract<DrawerClassKey, 'paper'> | 'permanent' | 'closed' | 'keepVisible';
+import { IView, ViewName, ViewType } from 'src/client/interfaces';
 
-type SideDrawerProps = Pick<DrawerProps, 'open' | 'onClose'> & WithStyles<SideDrawerClassName>;
+interface ISideDrawerProps extends Pick<DrawerProps, 'open' | 'onClose'>, WithStyles<SideDrawer.Classes> {
+  onSelectView(name: ViewName, type: ViewType): void;
+  selectedView: IView;
+}
 
 interface ISideDrawerState {
   permanent: boolean;
 }
 
-class SideDrawer extends React.Component<SideDrawerProps, ISideDrawerState> {
+class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
   state: ISideDrawerState = {
     permanent: false
   };
@@ -35,14 +40,18 @@ class SideDrawer extends React.Component<SideDrawerProps, ISideDrawerState> {
     };
   })
 
+  createClickHandler = _.memoize((name: ViewName, type: ViewType = ViewType.Table) => {
+    return () => this.props.onSelectView(name, type);
+  });
+
   render() {
-    const { classes, open, ...props } = this.props;
+    const { classes, open, onClose, selectedView } = this.props;
     const { permanent } = this.state;
 
     return (
       <Drawer
-        {...props}
         open={open}
+        onClose={onClose}
         variant={permanent ? 'permanent' : 'temporary'}
         classes={{
           paper: classNames(classes.paper, {
@@ -52,12 +61,37 @@ class SideDrawer extends React.Component<SideDrawerProps, ISideDrawerState> {
         }}
       >
         <List>
-          <ListItem button={true}>
+          <ListItem
+            button={true}
+            onClick={this.createClickHandler(ViewName.Coins)}
+          >
             <ListItemIcon>
               <MoneyIcon />
             </ListItemIcon>
             <ListItemText primary="Coins" />
           </ListItem>
+          {open && (
+            <List component="div" disablePadding={true}>
+              <ListItem
+                button={true}
+                dense={true}
+                onClick={this.createClickHandler(ViewName.Coins, ViewType.Table)}
+                className={classes.nested}
+              >
+                <ListItemIcon
+                  className={classNames({
+                    [classes.selected]: selectedView.type === ViewType.Table
+                  })}
+                >
+                  <TableIcon />
+                </ListItemIcon>
+                <ListItemText
+                  inset={true}
+                  primary="Table View"
+                />
+              </ListItem>
+            </List>
+          )}
         </List>
 
         {open && (
@@ -78,40 +112,50 @@ class SideDrawer extends React.Component<SideDrawerProps, ISideDrawerState> {
   }
 }
 
-const drawerWidth = 240;
+namespace SideDrawer {
+  export type Classes = Extract<DrawerClassKey, 'paper'> | 'permanent' | 'closed' | 'keepVisible' | 'nested' | 'selected';
 
-const styles: StyleRulesCallback<SideDrawerClassName> = theme => ({
-  paper: {
-    position: 'relative',
-    width: drawerWidth,
-    whiteSpace: 'nowrap',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    zIndex: 1,
-    maxHeight: '100%',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  permanent: {
-    maxWidth: drawerWidth
-  },
-  closed: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing.unit * 7,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 9,
+  const width = 240;
+
+  export const styles: StyleRulesCallback<Classes> = theme => ({
+    paper: {
+      width,
+      position: 'relative',
+      whiteSpace: 'nowrap',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      zIndex: 1,
+      maxHeight: '100%',
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
-  },
-  keepVisible: {
-    margin: theme.spacing.unit
-  }
-});
+    permanent: {
+      maxWidth: width
+    },
+    closed: {
+      overflowX: 'hidden',
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      width: theme.spacing.unit * 7,
+      [theme.breakpoints.up('sm')]: {
+        width: theme.spacing.unit * 9,
+      },
+    },
+    keepVisible: {
+      margin: theme.spacing.unit
+    },
+    nested: {
+      paddingLeft: 4 * theme.spacing.unit
+    },
+    selected: {
+      color: theme.palette.primary.main
+    }
+  });
+}
 
-export default withStyles(styles)(SideDrawer);
+export default withStyles(SideDrawer.styles)(SideDrawer);
