@@ -120,6 +120,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 const styles: StyleRulesCallback<CryptoLabClassName> = theme => ({
   root: {
     display: 'flex',
+    fontFamily: 'Roboto, Arial, sans-serif',
     maxWidth: '100vw',
     maxHeight: 'calc(100vh - 56px)',
     overflow: 'hidden'

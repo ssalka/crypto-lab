@@ -11,11 +11,11 @@ interface IAirtableThumbnail {
   height: number;
 }
 
-interface IAirtableAttachment {
+export interface IAirtableAttachment {
   filename: string;
   id: string;
   size: number;
-  thumbnails: Record<'large' | 'small', IAirtableThumbnail>;
+  thumbnails?: Record<'large' | 'small', IAirtableThumbnail>;
   type: string;
   url: string;
 }
