@@ -26,7 +26,7 @@ export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
 export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> {
   state = {
     coins: [],
-    drawerOpen: false,
+    drawerOpen: __DEV__,
     loading: true,
     view: {
       name: ViewName.Coins,

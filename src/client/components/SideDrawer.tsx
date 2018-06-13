@@ -26,7 +26,7 @@ interface ISideDrawerState {
 
 class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
   state: ISideDrawerState = {
-    permanent: false
+    permanent: __DEV__
   };
 
   toggleDrawerVariant = event => this.setState(state => {
