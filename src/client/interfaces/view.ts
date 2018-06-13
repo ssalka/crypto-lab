@@ -3,7 +3,8 @@ export const enum ViewName {
 }
 
 export const enum ViewType {
-  Table = 'table'
+  Table = 'table',
+  BasicCoin = 'basic-coin'
 }
 
 export interface IView {

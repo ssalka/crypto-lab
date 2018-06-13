@@ -3,7 +3,7 @@ import React from 'react';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
-import { Table, Header, SideDrawer } from 'src/client/components';
+import { BasicCoin, Table, Header, SideDrawer } from 'src/client/components';
 import { ICryptoAsset, IView, ViewName, ViewType } from 'src/client/interfaces';
 import { ILoaderResponse, Loader } from './loader';
 import Theme from './Theme';
@@ -34,12 +34,25 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     }
   };
 
-  static views = {
+  static views: Record<ViewName, Record<ViewType, (props, state) => any>> = {
     [ViewName.Coins]: {
       [ViewType.Table]: (props, state) => ({
         data: state.coins,
         loading: state.loading
-      })
+      }),
+      [ViewType.BasicCoin]: (props, state) => {
+        // NOTE: for now, just testing w/ random coins
+        const coin = _.flow(_.filter('Logo[0]'), _.sample, _.mapKeys(_.camelCase))(state.coins);
+
+        return !coin ? null : {
+          ...coin,
+          logo: coin.logo && coin.logo[0].url,
+          website: coin.officialWebsite,
+          whitepapers: coin.whitepaperS,
+          marketCap: coin.marketCap,
+          price: coin.price
+        };
+      }
     }
   };
 
@@ -76,16 +89,21 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     }));
   }
 
-  updateView = (name: ViewName, type: ViewType) => this.setState<'view'>({
-    view: { name, type }
-  })
+  updateView = (name: ViewName, type: ViewType) => {
+    this.setState<'view'>({
+      view: { name, type }
+    });
+  }
 
   View = (view: IView): JSX.Element => {
-    const props = this.getViewProps(view);
+    // TODO: infer prop types from view
+    const props: any = this.getViewProps(view);
 
     switch (view.type) {
       case ViewType.Table:
         return <Table {...props} />;
+      case ViewType.BasicCoin:
+        return <BasicCoin {...props} />;
     }
   }
 

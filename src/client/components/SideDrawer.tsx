@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import _ from 'lodash/fp';
 import React from 'react';
 
 import Checkbox from '@material-ui/core/Checkbox';
@@ -40,9 +39,9 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
     };
   })
 
-  createClickHandler = _.memoize((name: ViewName, type: ViewType = ViewType.Table) => {
+  createClickHandler(name: ViewName, type: ViewType = ViewType.Table) {
     return () => this.props.onSelectView(name, type);
-  });
+  }
 
   render() {
     const { classes, open, onClose, selectedView } = this.props;
@@ -88,6 +87,24 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
                 <ListItemText
                   inset={true}
                   primary="Table View"
+                />
+              </ListItem>
+              <ListItem
+                button={true}
+                dense={true}
+                onClick={this.createClickHandler(ViewName.Coins, ViewType.BasicCoin)}
+                className={classes.nested}
+              >
+                <ListItemIcon
+                  className={classNames({
+                    [classes.selected]: selectedView.type === ViewType.BasicCoin
+                  })}
+                >
+                  <TableIcon />
+                </ListItemIcon>
+                <ListItemText
+                  inset={true}
+                  primary="Basic Coin View"
                 />
               </ListItem>
             </List>
