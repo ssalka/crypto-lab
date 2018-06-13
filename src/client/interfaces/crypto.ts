@@ -21,14 +21,3 @@ export const enum CurrencyCode {
   Litecoin = 'LTC',
   IOTA = 'IOTA'
 }
-
-export const enum ProjectCategory {
-  SmartContractPlatform = 'Smart Contract Platform',
-  OracleNetwork = 'Oracle Network'
-}
-
-export const enum ProjectType {
-  Protocol = 'Protocol',
-  Platform = 'Platform',
-  Application = 'Application'
-}

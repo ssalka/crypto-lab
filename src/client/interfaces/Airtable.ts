@@ -1,4 +1,4 @@
-import { CurrencyCode, ProjectCategory, ProjectName, ProjectType } from './crypto';
+import { CurrencyCode, ProjectName } from './crypto';
 
 interface IAirtableLogo {
   id: string;
@@ -24,7 +24,7 @@ export interface IAirtableCoin {
   Blockchain: string[];
   Bookmarks: string[];
   'Buy Target': string;
-  Category: ProjectCategory;
+  Category: string;
   'Consensus Mechanism': string;
   Contributors: string[];
   'Date Added': string;
@@ -54,7 +54,7 @@ export interface IAirtableCoin {
   Tags: string[];
   'Top 5': boolean;
   'Trading Notes': string[];
-  Type: ProjectType;
+  Type: string;
   'Whitepaper(s)': IAirtableAttachment[];
   'Written In': string[];
 }
