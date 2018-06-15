@@ -3,7 +3,7 @@ import React from 'react';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
-import { BasicCoin, Table, Header, SideDrawer } from 'src/client/components';
+import { Project, Table, Header, SideDrawer } from 'src/client/components';
 import { ICryptoAsset, IView, ViewName, ViewType } from 'src/client/interfaces';
 import { ILoaderResponse, Loader } from './loader';
 import Theme from './Theme';
@@ -30,7 +30,8 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     loading: true,
     view: {
       name: ViewName.Coins,
-      type: ViewType.Table
+      type: ViewType.Table,
+      config: {}
     }
   };
 
@@ -40,9 +41,9 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
         data: state.coins,
         loading: state.loading
       }),
-      [ViewType.BasicCoin]: (props, state) => {
-        // NOTE: for now, just testing w/ random coins
-        const coin = _.flow(_.filter('Logo[0]'), _.sample, _.mapKeys(_.camelCase))(state.coins);
+      [ViewType.Project]: (props, state) => {
+        const { data } = state.view.config;
+        const coin = _.mapKeys(_.camelCase, data);
 
         return !coin ? null : {
           ...coin,
@@ -89,9 +90,15 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     }));
   }
 
-  updateView = (name: ViewName, type: ViewType) => {
+  updateView = (name: ViewName, type: ViewType, config: IView['config'] = {}) => {
     this.setState<'view'>({
-      view: { name, type }
+      view: { name, type, config }
+    });
+  }
+
+  goToProject = (event, project: ICryptoAsset) => {
+    this.updateView(ViewName.Coins, ViewType.Project, {
+      data: project
     });
   }
 
@@ -101,9 +108,14 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
     switch (view.type) {
       case ViewType.Table:
-        return <Table {...props} />;
-      case ViewType.BasicCoin:
-        return <BasicCoin {...props} />;
+        return (
+          <Table
+            {...props}
+            onRowClick={this.goToProject}
+          />
+        );
+      case ViewType.Project:
+        return <Project {...props} />;
     }
   }
 

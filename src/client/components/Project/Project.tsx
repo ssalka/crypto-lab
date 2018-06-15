@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { CoinMarketCapCoin, IAirtableAttachment, ProjectName } from 'src/client/interfaces';
 
-interface IBasicCoinProps extends CoinMarketCapCoin {
+interface IProjectProps extends CoinMarketCapCoin {
   name: ProjectName;
   logo?: string;
   category?: string;
@@ -15,8 +15,9 @@ interface IBasicCoinProps extends CoinMarketCapCoin {
   whitepapers?: IAirtableAttachment[];
 }
 
-export default class BasicCoin extends React.Component<IBasicCoinProps> {
+export default class Project extends React.Component<IProjectProps> {
   render() {
+    console.log(this.props);
     const { name, logo, category, website, premise, symbol, type, whitepapers, price } = this.props;
 
     return (

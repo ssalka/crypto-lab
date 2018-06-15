@@ -89,24 +89,6 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
                   primary="Table View"
                 />
               </ListItem>
-              <ListItem
-                button={true}
-                dense={true}
-                onClick={this.createClickHandler(ViewName.Coins, ViewType.BasicCoin)}
-                className={classes.nested}
-              >
-                <ListItemIcon
-                  className={classNames({
-                    [classes.selected]: selectedView.type === ViewType.BasicCoin
-                  })}
-                >
-                  <TableIcon />
-                </ListItemIcon>
-                <ListItemText
-                  inset={true}
-                  primary="Basic Coin View"
-                />
-              </ListItem>
             </List>
           )}
         </List>

@@ -9,7 +9,7 @@ import { FieldName } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
 import * as columns from './columns';
 
-interface ITableRowProps extends Pick<HTMLProps<HTMLTableRowElement>, 'onClick'> {
+interface ITableRowProps extends Pick<HTMLProps<HTMLTableRowElement>, 'className' | 'onClick'> {
   columnOrder: FieldName[];
   data: Record<string, any>;
 }
@@ -67,11 +67,11 @@ class EnhancedTableRow extends React.Component<TableRowProps> {
       );
     }
 
-    const { columnOrder, data, onClick } = this.props as (ITableRowProps & HTMLProps<any>);
+    const { className, columnOrder, data, onClick } = this.props as (ITableRowProps & HTMLProps<any>);
     const [firstField, ...otherFields] = columnOrder;
 
     return (
-      <TableRow hover={true} onClick={onClick}>
+      <TableRow className={className} hover={true} onClick={onClick}>
         <TableCell component="th" scope="row">
           {this.formatCellValue(data[firstField], firstField)}
         </TableCell>

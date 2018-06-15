@@ -4,10 +4,13 @@ export const enum ViewName {
 
 export const enum ViewType {
   Table = 'table',
-  BasicCoin = 'basic-coin'
+  Project = 'project'
 }
 
 export interface IView {
   name: ViewName;
   type: ViewType;
+  config?: {
+    [key: string]: any;
+  };
 }

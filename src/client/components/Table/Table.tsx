@@ -15,7 +15,7 @@ import TableHead from './TableHead';
 import TableRow from './TableRow';
 import * as columns from './columns';
 
-type TableClassName = TableClassKey | 'table' | 'logo' | 'paginator';
+type TableClassName = TableClassKey | 'table' | 'row' | 'logo' | 'paginator';
 
 interface ITableProps {
   data: ICryptoAsset[];
@@ -155,6 +155,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
                 <TableRow
                   columnOrder={columnOrder}
                   data={row}
+                  className={classes.row}
                   onClick={this.createRowClickHandler(row)}
                   key={row[this.idKey]}
                 />
@@ -195,6 +196,9 @@ const styles: StyleRulesCallback<TableClassName> = theme => ({
   },
   table: {
     minWidth: Math.min(1020, window.innerWidth)
+  },
+  row: {
+    cursor: 'pointer'
   },
   logo: {
     maxWidth: 30,
