@@ -3,24 +3,17 @@ import React, { ComponentType, ReactNode } from 'react';
 
 import Table, { TableClassKey } from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell, { SortDirection } from '@material-ui/core/TableCell';
+import { SortDirection } from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
 
-import { ICryptoAsset } from 'src/client/interfaces';
+import { ICryptoAsset, FieldName } from 'src/client/interfaces/crypto';
 import { formatUSD } from 'src/client/utils';
 import TableHead from './TableHead';
-
-namespace columns {
-  export const currency: FieldName[] = ['price', 'marketCap'];
-  export const numerical: FieldName[] = ['Rank'];
-  export const defaultOrder: FieldName[] = ['Logo', 'Rank', 'Name', 'Symbol', 'Category', 'trading', ...currency];
-}
-
-type FieldName = keyof ICryptoAsset;
+import TableRow from './TableRow';
+import * as columns from './columns';
 
 type TableClassName = TableClassKey | 'table' | 'logo' | 'paginator';
 
@@ -115,7 +108,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     else if (_.isObject(value)) {
       formattedValue = JSON.stringify(value);
     }
-    else if (columns.currency.includes(key)) {
+    else if (columns.monetary.includes(key)) {
       formattedValue = formatUSD(value);
     }
     else if (_.isBoolean(value)) {
@@ -138,7 +131,6 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
   render() {
     const { classes, columnOrder } = this.props;
     const { data, order, orderBy, page, rowsPerPage } = this.state;
-    const [firstField, ...otherFields] = columnOrder;
     const emptyRows = this.getEmptyRowCount();
 
     return (
@@ -152,23 +144,11 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
               onRequestSort={this.handleRequestSort}
             />
             <TableBody>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => (
-                <TableRow
-                  hover={true}
-                  key={n[this.idKey]}
-                >
-                  <TableCell component="th" scope="row">
-                    {this.formatCellValue(n[firstField], firstField)}
-                  </TableCell>
-                  {otherFields.map(field => (
-                    <TableCell key={field}>{this.formatCellValue(n[field], field)}</TableCell>
-                  ))}
-                </TableRow>
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+                <TableRow columnOrder={columnOrder} data={row} key={row[this.idKey]} />
               ))}
               {!!emptyRows && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
+                <TableRow colSpan={columnOrder.length} rowSpan={emptyRows} />
               )}
             </TableBody>
           </Table>

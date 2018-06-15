@@ -6,6 +6,8 @@ export interface ICryptoAsset extends IAirtableCoin, CoinMarketCapCoin {
   trading: ICryptoCompareCoin['IsTrading'];
 }
 
+export type FieldName = keyof ICryptoAsset;
+
 export const enum ProjectName {
   USD = 'US Dollar',
   BTC = 'Bitcoin',
