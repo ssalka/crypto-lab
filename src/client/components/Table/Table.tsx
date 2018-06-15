@@ -21,6 +21,7 @@ interface ITableProps {
   data: ICryptoAsset[];
   loading: boolean;
   columnOrder?: FieldName[];
+  onRowClick?(event, row: ICryptoAsset): void;
 }
 
 interface ITableState {
@@ -97,6 +98,12 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     this.setState({ rowsPerPage: event.target.value });
   }
 
+  createRowClickHandler = row => event => {
+    if (this.props.onRowClick) {
+      this.props.onRowClick(event, row);
+    }
+  }
+
   formatCellValue(value: any, key: FieldName): ReactNode {
     let formattedValue: ReactNode;
 
@@ -145,7 +152,12 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
             />
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                <TableRow columnOrder={columnOrder} data={row} key={row[this.idKey]} />
+                <TableRow
+                  columnOrder={columnOrder}
+                  data={row}
+                  onClick={this.createRowClickHandler(row)}
+                  key={row[this.idKey]}
+                />
               ))}
               {!!emptyRows && (
                 <TableRow colSpan={columnOrder.length} rowSpan={emptyRows} />

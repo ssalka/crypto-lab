@@ -1,5 +1,5 @@
 import _ from 'lodash/fp';
-import React, { ReactNode } from 'react';
+import React, { HTMLProps, ReactNode } from 'react';
 
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -9,14 +9,15 @@ import { FieldName } from 'src/client/interfaces';
 import { formatUSD } from 'src/client/utils';
 import * as columns from './columns';
 
-interface ITableRowProps {
+interface ITableRowProps extends Pick<HTMLProps<HTMLTableRowElement>, 'onClick'> {
   columnOrder: FieldName[];
   data: Record<string, any>;
 }
 
+// TODO: upgrade to TS 2.9, make component generic w/ conditional empty type
 interface IEmptyTableRowProps {
-  colSpan: number;
-  rowSpan: number;
+  colSpan?: number;
+  rowSpan?: number;
 }
 
 type TableRowProps = ITableRowProps | IEmptyTableRowProps;
@@ -66,15 +67,11 @@ class EnhancedTableRow extends React.Component<TableRowProps> {
       );
     }
 
-    const { columnOrder, data } = this.props as ITableRowProps;
+    const { columnOrder, data, onClick } = this.props as (ITableRowProps & HTMLProps<any>);
     const [firstField, ...otherFields] = columnOrder;
 
-    return this.isEmpty() ? (
-      <TableRow style={styles.emptyRows(49)}>
-        <TableCell colSpan={columnOrder.length} />
-      </TableRow>
-    ) : (
-      <TableRow hover={true}>
+    return (
+      <TableRow hover={true} onClick={onClick}>
         <TableCell component="th" scope="row">
           {this.formatCellValue(data[firstField], firstField)}
         </TableCell>
