@@ -1,9 +1,9 @@
 import { IAirtableCoin } from './Airtable';
 import { CoinMarketCapCoin } from './CoinMarketCap';
-import { ICryptoCompareCoin } from './CryptoCompare';
+import { INormalizedCryptoCompareCoin } from './CryptoCompare';
 
 export interface ICryptoAsset extends IAirtableCoin, CoinMarketCapCoin {
-  trading: ICryptoCompareCoin['IsTrading'];
+  trading: INormalizedCryptoCompareCoin['trading'];
 }
 
 export type FieldName = keyof ICryptoAsset;

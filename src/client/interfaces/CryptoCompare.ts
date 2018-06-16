@@ -8,10 +8,6 @@ export interface ICryptoCompareResponse {
   Data: Record<string, ICryptoCompareCoin>;
 }
 
-export interface ICryptoCompareMetadata {
-  price: number;
-}
-
 export interface ICryptoCompareCoin {
   Algorithm: string;
   CoinName: Exclude<ProjectName, ProjectName.USD>;
@@ -29,6 +25,13 @@ export interface ICryptoCompareCoin {
   TotalCoinSupply: string;
   TotalCoinsFreeFloat: string;
   Url: string;
+  price?: number;
 }
 
-export type CryptoCompareCoin = ICryptoCompareCoin & Partial<ICryptoCompareMetadata>;
+export interface INormalizedCryptoCompareCoin {
+  name: ICryptoCompareCoin['CoinName'];
+  logo: ICryptoCompareCoin['ImageUrl'];
+  symbol: ICryptoCompareCoin['Symbol'];
+  trading: ICryptoCompareCoin['IsTrading'];
+  price?: ICryptoCompareCoin['price'];
+}

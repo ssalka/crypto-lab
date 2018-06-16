@@ -47,7 +47,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
         return !coin ? null : {
           ...coin,
-          logo: coin.logo && coin.logo[0].url,
+          logo: coin.logo ? coin.logo[0].url : coin.imageUrl,
           website: coin.officialWebsite,
           whitepapers: coin.whitepaperS,
           marketCap: coin.marketCap,
@@ -78,8 +78,8 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
   mapToOwnSchema(coins: ILoaderResponse[]): ICryptoAsset[] {
     return coins.map(({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset => ({
       ...airtable,
-      trading: _.has('IsTrading', cryptoCompare) ? cryptoCompare.IsTrading : false,
-      price: _.get('quotes.USD.price', coinMarketCap) || 0,
+      trading: _.get('trading', cryptoCompare),
+      price: _.get('quotes.USD.price', coinMarketCap) || _.get('price', cryptoCompare) || 0,
       marketCap: _.get('quotes.USD.market_cap', coinMarketCap) || ''
     }));
   }

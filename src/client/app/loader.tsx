@@ -6,13 +6,13 @@ import CryptoCompareAdapter from 'src/client/adapters/CryptoCompareAdapter';
 import {
   IAirtableCoin,
   ICoinMarketCapMetadata,
-  ICryptoCompareCoin
+  INormalizedCryptoCompareCoin
 } from 'src/client/interfaces';
 
 interface ILoaderResponse {
   airtable: IAirtableCoin;
   coinMarketCap: ICoinMarketCapMetadata;
-  cryptoCompare: ICryptoCompareCoin;
+  cryptoCompare: INormalizedCryptoCompareCoin;
 }
 
 type Loader = () => Promise<ILoaderResponse[]>;
@@ -39,7 +39,7 @@ const loader: Loader = async () => {
   return airtableCoinData.map((coin, i) => ({
     airtable: coin,
     coinMarketCap: coinMarketCap.coins[i],
-    cryptoCompare: cryptoCompare.allCoins[coin.Symbol]
+    cryptoCompare: cryptoCompare.coins[i]
   }));
 };
 
