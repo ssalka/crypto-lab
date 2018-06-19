@@ -42,16 +42,12 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
         loading: state.loading
       }),
       [ViewType.Project]: (props, state) => {
-        const { data } = state.view.config;
-        const coin = _.mapKeys(_.camelCase, data);
+        const { data: coin } = state.view.config;
 
         return !coin ? null : {
           ...coin,
           logo: coin.logo ? coin.logo[0].url : coin.imageUrl,
-          website: coin.officialWebsite,
-          whitepapers: coin.whitepaperS,
-          marketCap: coin.marketCap,
-          price: coin.price
+          website: coin.officialWebsite
         };
       }
     }
@@ -71,16 +67,16 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
   async componentDidMount() {
     const response = await this.props.loader();
+    console.log(response);
     const coins = this.mapToOwnSchema(response);
     this.setState({ coins, loading: false });
   }
 
   mapToOwnSchema(coins: ILoaderResponse[]): ICryptoAsset[] {
     return coins.map(({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset => ({
-      ...airtable,
-      trading: _.get('trading', cryptoCompare),
-      price: _.get('quotes.USD.price', coinMarketCap) || _.get('price', cryptoCompare) || 0,
-      marketCap: _.get('quotes.USD.market_cap', coinMarketCap) || ''
+      ...cryptoCompare,
+      ...coinMarketCap,
+      ...airtable
     }));
   }
 

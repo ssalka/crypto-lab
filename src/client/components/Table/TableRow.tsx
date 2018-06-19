@@ -26,10 +26,10 @@ class EnhancedTableRow extends React.Component<TableRowProps> {
   formatCellValue(value: any, key: FieldName): ReactNode {
     let formattedValue: ReactNode;
 
-    if (_.isArray(value)) {
-      formattedValue = _.has('url', value[0])
-        ? <img src={value[0].url} style={styles.logo} />
-        : value.join(', ');
+    if (columns.image.includes(key)) {
+      // TODO: default to 1st image from airtable array in schema mapping
+      const src = _.isArray(value) ? value[0].url : value;
+      formattedValue = <img src={src} style={styles.logo} />;
     }
     else if (_.isObject(value)) {
       formattedValue = JSON.stringify(value);

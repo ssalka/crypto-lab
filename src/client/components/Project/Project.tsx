@@ -2,15 +2,15 @@ import _ from 'lodash/fp';
 import React, { CSSProperties } from 'react';
 import Typography from '@material-ui/core/Typography';
 
-import { CoinMarketCapCoin, IAirtableAttachment, ProjectName } from 'src/client/interfaces';
+import { CurrencyCode, INormalizedCoinMarketCapCoin, IAirtableAttachment, ProjectName } from 'src/client/interfaces';
 
-interface IProjectProps extends CoinMarketCapCoin {
+interface IProjectProps extends INormalizedCoinMarketCapCoin {
   name: ProjectName;
   logo?: string;
   category?: string;
   website?: string;
   premise?: string;
-  symbol: string;
+  symbol: CurrencyCode;
   type: string;
   whitepapers?: IAirtableAttachment[];
 }

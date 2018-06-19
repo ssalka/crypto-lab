@@ -1,15 +1,16 @@
-import { IAirtableCoin } from './Airtable';
-import { CoinMarketCapCoin } from './CoinMarketCap';
+import { INormalizedAirtableCoin } from './Airtable';
+import { INormalizedCoinMarketCapCoin } from './CoinMarketCap';
 import { INormalizedCryptoCompareCoin } from './CryptoCompare';
 
-export interface ICryptoAsset extends IAirtableCoin, CoinMarketCapCoin {
-  trading: INormalizedCryptoCompareCoin['trading'];
+export interface ICryptoAsset extends INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin {
+  name: ProjectName;
+  price: number;
+  logo: string;
 }
 
 export type FieldName = keyof ICryptoAsset;
 
 export const enum ProjectName {
-  USD = 'US Dollar',
   BTC = 'Bitcoin',
   ETH = 'Ethereum',
   LTC = 'Litecoin',

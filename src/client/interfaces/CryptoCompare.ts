@@ -10,7 +10,7 @@ export interface ICryptoCompareResponse {
 
 export interface ICryptoCompareCoin {
   Algorithm: string;
-  CoinName: Exclude<ProjectName, ProjectName.USD>;
+  CoinName: ProjectName;
   FullName: string;
   FullyPremined: string;
   Id: string;

@@ -7,6 +7,8 @@ function isMoneyAmount(value: string): value is MoneyAmount {
 }
 
 export function formatUSD(value: string | number) {
+  if (_.isNil(value)) return '$0';
+
   const stringValue = value.toString();
 
   return !isMoneyAmount(stringValue)

@@ -22,13 +22,14 @@ export interface ICoinMarketCapCoin {
   last_updated: number;
 }
 
-export interface ICoinMarketCapMetadata {
-  marketCap: number;
-  price: number;
-}
-
 export interface ICoinMarketCapResponse {
   data: Record<string, ICoinMarketCapCoin>;
 }
 
-export type CoinMarketCapCoin = ICoinMarketCapMetadata;
+export interface INormalizedCoinMarketCapCoin {
+  name: ICoinMarketCapCoin['name'];
+  symbol: ICoinMarketCapCoin['symbol'];
+  rank: ICoinMarketCapCoin['rank'];
+  marketCap: ICoinMarketCapCoin['quotes']['USD']['market_cap'];
+  price: ICoinMarketCapCoin['quotes']['USD']['price'];
+}

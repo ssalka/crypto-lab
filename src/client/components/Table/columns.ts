@@ -1,7 +1,9 @@
 import { FieldName } from 'src/client/interfaces';
 
+export const image: FieldName[] = ['logo'];
+
 export const monetary: FieldName[] = ['price', 'marketCap'];
 
-export const numerical: FieldName[] = ['Rank'];
+export const numerical: FieldName[] = ['rank'];
 
-export const defaultOrder: FieldName[] = ['Logo', 'Rank', 'Name', 'Symbol', 'Category', 'trading', ...monetary];
+export const defaultOrder: FieldName[] = [...image, 'rank', 'name', 'symbol', 'category', 'trading', ...monetary];

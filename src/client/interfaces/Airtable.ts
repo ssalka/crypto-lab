@@ -55,6 +55,35 @@ export interface IAirtableCoin {
   'Top 5': boolean;
   'Trading Notes': string[];
   Type: string;
-  'Whitepaper(s)': IAirtableAttachment[];
+  Whitepapers: IAirtableAttachment[];
   'Written In': string[];
+}
+
+export interface INormalizedAirtableCoin {
+  blockchain: string[];
+  bookmarks: string[];
+  category: string;
+  consensusAlgorithm: string;
+  contributors: string[];
+  favorites: boolean;
+  features: string[];
+  forks: string[];
+  industry: string;
+  links: string;
+  listedOn: string[];
+  location: string;
+  logo: string;
+  name: ProjectName;
+  notes: string;
+  officialWebsite: string;
+  premise: string;
+  rank: number;
+  reasonsToLike: string[];
+  relatedActors: string[];
+  stage: string;
+  symbol: CurrencyCode;
+  tags: string[];
+  type: string;
+  whitepapers: IAirtableAttachment[];
+  writtenIn: string[];
 }
