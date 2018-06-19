@@ -33,7 +33,21 @@ export default class AirtableAdapter {
     this.coins = _.flow(
       _.filter('Symbol'),
       _.map(_.mapKeys(_.camelCase)),
-      _.map(_.omit('marketCap')) // conflicts with cmc
+      _.map(_.omit('marketCap')) // conflicts with cmc marketCap field
     )(this.allCoins) as INormalizedAirtableCoin[];
+
+    // TODO: more functional way to override individual fields
+    _.filter('logo', this.coins).forEach(this.takeFirstLogo);
+  }
+
+  takeFirstLogo(coin) {
+    if (coin.logo.length) {
+      const logo: string = coin.logo[0].url;
+
+      coin.logo = logo;
+    }
+    else {
+      delete coin.logo;
+    }
   }
 }

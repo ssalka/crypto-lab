@@ -46,7 +46,6 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
         return !coin ? null : {
           ...coin,
-          logo: coin.logo ? coin.logo[0].url : coin.imageUrl,
           website: coin.officialWebsite
         };
       }
