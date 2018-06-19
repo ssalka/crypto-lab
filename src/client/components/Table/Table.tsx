@@ -44,7 +44,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     columnOrder: columns.defaultOrder
   };
 
-  idKey = 'Name';
+  idKey = 'name';
 
   state: ITableState = {
     ...initialState,
