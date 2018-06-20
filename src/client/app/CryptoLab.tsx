@@ -74,7 +74,8 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     return coins.map(({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset => ({
       ...cryptoCompare,
       ...coinMarketCap,
-      ...airtable
+      ...airtable,
+      trading: cryptoCompare.trading || (coinMarketCap && !!coinMarketCap.price) || !_.isEmpty(airtable.listedOn)
     }));
   }
 
