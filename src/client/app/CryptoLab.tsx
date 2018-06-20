@@ -66,7 +66,6 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
   async componentDidMount() {
     const response = await this.props.loader();
-    console.log(response);
     const coins = this.mapToOwnSchema(response);
     this.setState({ coins, loading: false });
   }
