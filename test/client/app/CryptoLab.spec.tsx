@@ -6,7 +6,11 @@ import { ProjectName } from 'src/client/interfaces';
 
 describe('CryptoLab', () => {
   const coinNames = [ProjectName.BTC, ProjectName.ETH];
-  const loadCoins: Loader = async () => coinNames.map(name => ({ name }));
+  const loadCoins: Loader = async () => coinNames.map(name => ({
+    airtable: {
+      name
+    }
+  }));
   let loaderSpy: jest.FunctionLike;
 
   let cryptoLab: ReturnType<typeof getComponent>;

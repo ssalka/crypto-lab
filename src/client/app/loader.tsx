@@ -11,8 +11,8 @@ import {
 
 interface ILoaderResponse {
   airtable: INormalizedAirtableCoin;
-  coinMarketCap: INormalizedCoinMarketCapCoin;
-  cryptoCompare: INormalizedCryptoCompareCoin;
+  coinMarketCap?: INormalizedCoinMarketCapCoin;
+  cryptoCompare?: INormalizedCryptoCompareCoin;
 }
 
 type Loader = () => Promise<ILoaderResponse[]>;

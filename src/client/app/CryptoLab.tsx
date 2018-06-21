@@ -66,17 +66,24 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
   async componentDidMount() {
     const response = await this.props.loader();
-    const coins = this.mapToOwnSchema(response);
+    const coins = response.map(this.toOwnSchema);
     this.setState({ coins, loading: false });
   }
 
-  mapToOwnSchema(coins: ILoaderResponse[]): ICryptoAsset[] {
-    return coins.map(({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset => ({
+  toOwnSchema({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset {
+    // NOTE: need a way for the user to configure field overrides here
+    const customFields = {
+      trading: cryptoCompare && cryptoCompare.trading
+        || coinMarketCap && !!coinMarketCap.price
+        || !_.isEmpty(airtable.listedOn)
+    };
+
+    return {
       ...cryptoCompare,
       ...coinMarketCap,
       ...airtable,
-      trading: cryptoCompare.trading || (coinMarketCap && !!coinMarketCap.price) || !_.isEmpty(airtable.listedOn)
-    }));
+      ...customFields
+    };
   }
 
   toggleSideDrawer = () => {
