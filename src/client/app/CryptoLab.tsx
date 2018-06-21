@@ -1,12 +1,12 @@
 import _ from 'lodash/fp';
 import React from 'react';
 
-import { Table, Header, SideDrawer } from 'src/client/components';
-import { ICryptoAsset } from 'src/client/interfaces';
+import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
+
+import { Project, Table, Header, SideDrawer } from 'src/client/components';
+import { ICryptoAsset, IView, ViewName, ViewType } from 'src/client/interfaces';
 import { ILoaderResponse, Loader } from './loader';
 import Theme from './Theme';
-
-import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
 type CryptoLabClassName = 'root' | 'main';
 
@@ -18,6 +18,7 @@ export interface ICryptoLabState {
   coins: ICryptoAsset[];
   drawerOpen: boolean;
   loading: boolean;
+  view: IView;
 }
 
 export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
@@ -25,52 +26,122 @@ export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
 export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> {
   state = {
     coins: [],
-    drawerOpen: false,
-    loading: true
+    drawerOpen: __DEV__,
+    loading: true,
+    view: {
+      name: ViewName.Coins,
+      type: ViewType.Table,
+      config: {}
+    }
   };
+
+  static views: Record<ViewName, Record<ViewType, (props, state) => any>> = {
+    [ViewName.Coins]: {
+      [ViewType.Table]: (props, state) => ({
+        data: state.coins,
+        loading: state.loading
+      }),
+      [ViewType.Project]: (props, state) => {
+        const { data: coin } = state.view.config;
+
+        return !coin ? null : {
+          ...coin,
+          website: coin.officialWebsite
+        };
+      }
+    }
+  };
+
+  getViewProps({ name, type }: IView) {
+    if (_.has(`${name}.${type}`, CryptoLab.views)) {
+      const getProps = CryptoLab.views[name][type];
+
+      return getProps(this.props, this.state);
+    }
+
+    console.warn('Unsupported view options:', { name, type });
+
+    return null;
+  }
 
   async componentDidMount() {
     const response = await this.props.loader();
-    const coins = this.mapToOwnSchema(response);
+    const coins = response.map(this.toOwnSchema);
     this.setState({ coins, loading: false });
   }
 
-  mapToOwnSchema(coins: ILoaderResponse[]): ICryptoAsset[] {
-    return coins.map(({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset => ({
+  toOwnSchema({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset {
+    // NOTE: need a way for the user to configure field overrides here
+    const customFields = {
+      trading: cryptoCompare && cryptoCompare.trading
+        || coinMarketCap && !!coinMarketCap.price
+        || !_.isEmpty(airtable.listedOn)
+    };
+
+    return {
+      ...cryptoCompare,
+      ...coinMarketCap,
       ...airtable,
-      trading: _.has('IsTrading', cryptoCompare) ? cryptoCompare.IsTrading : false,
-      price: _.get('quotes.USD.price', coinMarketCap) || 0,
-      marketCap: _.get('quotes.USD.market_cap', coinMarketCap) || ''
-    }));
+      ...customFields
+    };
   }
 
   toggleSideDrawer = () => {
-    this.setState(prevState => ({
+    this.setState<'drawerOpen'>(prevState => ({
       drawerOpen: !prevState.drawerOpen
     }));
   }
 
+  updateView = (name: ViewName, type: ViewType, config: IView['config'] = {}) => {
+    this.setState<'view'>({
+      view: { name, type, config }
+    });
+  }
+
+  goToProject = (event, project: ICryptoAsset) => {
+    this.updateView(ViewName.Coins, ViewType.Project, {
+      data: project
+    });
+  }
+
+  View = (view: IView): JSX.Element => {
+    // TODO: infer prop types from view
+    const props: any = this.getViewProps(view);
+
+    switch (view.type) {
+      case ViewType.Table:
+        return (
+          <Table
+            {...props}
+            onRowClick={this.goToProject}
+          />
+        );
+      case ViewType.Project:
+        return <Project {...props} />;
+    }
+  }
+
   render() {
+    const { toggleSideDrawer, updateView, View } = this;
     const { classes } = this.props;
-    const { coins, drawerOpen, loading } = this.state;
+    const { drawerOpen, view } = this.state;
 
     return (
       <Theme type="light">
         <Header
           title="Crypto Lab"
           menuOpen={drawerOpen}
-          onMenuToggle={this.toggleSideDrawer}
+          onMenuToggle={toggleSideDrawer}
         />
         <div className={classes.root}>
           <SideDrawer
             open={drawerOpen}
-            onClose={this.toggleSideDrawer}
+            onClose={toggleSideDrawer}
+            onSelectView={updateView}
+            selectedView={view}
           />
           <main className={classes.main}>
-            <Table
-              data={coins}
-              loading={loading}
-            />
+            <View {...view} />
           </main>
         </div>
       </Theme>
@@ -81,6 +152,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 const styles: StyleRulesCallback<CryptoLabClassName> = theme => ({
   root: {
     display: 'flex',
+    fontFamily: 'Roboto, Arial, sans-serif',
     maxWidth: '100vw',
     maxHeight: 'calc(100vh - 56px)',
     overflow: 'hidden'

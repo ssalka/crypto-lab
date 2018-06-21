@@ -3,18 +3,22 @@ import cc from 'cryptocompare';
 import _ from 'lodash/fp';
 
 import {
-  CryptoCompareCoin,
+  INormalizedCryptoCompareCoin,
   CurrencyCode,
   ProjectName,
-  ICryptoCompareResponse
+  ICryptoCompareCoin,
+  ICryptoCompareResponse,
+  Omit
 } from 'src/client/interfaces';
 
 export default class CryptoCompareAdapter {
+  static website = 'https://www.cryptocompare.com';
+
   constructor(public base: CurrencyCode = CurrencyCode.Dollar) {}
 
   requestedCoins: ProjectName[] = [];
 
-  coins: CryptoCompareCoin[] = [];
+  coins: INormalizedCryptoCompareCoin[] = [];
 
   allCoins: ICryptoCompareResponse['Data'] = {};
 
@@ -22,15 +26,25 @@ export default class CryptoCompareAdapter {
     this.requestedCoins = coinNames;
   }
 
-  async getCoins(): Promise<CryptoCompareCoin[]> {
-    this.cacheCoins(await cc.coinList());
-    this.updateCoinPrices(await this.getAllPrices());
+  async getCoins(): Promise<INormalizedCryptoCompareCoin[]> {
+    const response = await cc.coinList();
+    this.matchRequestedCoins(response);
+
+    const prices = await this.fetchAllPrices(response);
+    this.updateCoinsWithPrices(prices);
 
     return this.coins;
   }
 
+  matchRequestedCoins({ Data: allCoins }: ICryptoCompareResponse) {
+    this.allCoins = allCoins;
+    this.coins = this.requestedCoins
+      .map(this.findByName)
+      .map(this.normalizeSchema);
+  }
+
   @bind
-  async getAllPrices(): Promise<number[]> {
+  async fetchAllPrices(coins: ICryptoCompareCoin[]): Promise<number[]> {
     const getPricefromSymbol = _.flow(
       _.map('Symbol'),
       _.map(this.getPrice)
@@ -55,30 +69,29 @@ export default class CryptoCompareAdapter {
     }
   }
 
-  cacheCoins({ Data: allCoins }: ICryptoCompareResponse) {
-    this.allCoins = allCoins;
-    this.coins = this.requestedCoins.map(this.findByName);
-  }
-
-  updateCoinPrices(prices: number[]) {
-    this.coins = _.zipWith(this.updateCoinPrice)(this.coins, prices);
+  @bind
+  findByName(CoinName: ProjectName): ICryptoCompareCoin {
+    return _.find({ CoinName } as ICryptoCompareCoin, this.allCoins) || null;
   }
 
   @bind
-  updateCoinPrice(
-    coin: CryptoCompareCoin,
-    price: number
-  ): CryptoCompareCoin {
-    if (!coin) return coin;
+  normalizeSchema(coin: ICryptoCompareCoin | null): Omit<INormalizedCryptoCompareCoin, 'price'> {
+    if (!coin) return null;
 
     return {
-      ...coin,
-      price
+      name: coin.CoinName,
+      symbol: coin.Symbol,
+      logo: CryptoCompareAdapter.website + coin.ImageUrl,
+      trading: coin.IsTrading
     };
   }
 
+  updateCoinsWithPrices(prices: number[]) {
+    this.coins = _.zipWith(this.assignPrice)(this.coins, prices);
+  }
+
   @bind
-  findByName(CoinName: ProjectName): CryptoCompareCoin {
-    return _.find({ CoinName } as CryptoCompareCoin, this.allCoins);
+  assignPrice(coin: Omit<INormalizedCryptoCompareCoin, 'price'>, price: number): INormalizedCryptoCompareCoin {
+    return { ...coin, price };
   }
 }

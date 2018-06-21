@@ -1,13 +1,16 @@
-import { IAirtableCoin } from './Airtable';
-import { CoinMarketCapCoin } from './CoinMarketCap';
-import { ICryptoCompareCoin } from './CryptoCompare';
+import { INormalizedAirtableCoin } from './Airtable';
+import { INormalizedCoinMarketCapCoin } from './CoinMarketCap';
+import { INormalizedCryptoCompareCoin } from './CryptoCompare';
 
-export interface ICryptoAsset extends IAirtableCoin, CoinMarketCapCoin {
-  trading: ICryptoCompareCoin['IsTrading'];
+export interface ICryptoAsset extends INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin {
+  name: ProjectName;
+  price: number;
+  logo: string;
 }
 
+export type FieldName = keyof ICryptoAsset;
+
 export const enum ProjectName {
-  USD = 'US Dollar',
   BTC = 'Bitcoin',
   ETH = 'Ethereum',
   LTC = 'Litecoin',
@@ -20,15 +23,4 @@ export const enum CurrencyCode {
   Ethereum = 'ETH',
   Litecoin = 'LTC',
   IOTA = 'IOTA'
-}
-
-export const enum ProjectCategory {
-  SmartContractPlatform = 'Smart Contract Platform',
-  OracleNetwork = 'Oracle Network'
-}
-
-export const enum ProjectType {
-  Protocol = 'Protocol',
-  Platform = 'Platform',
-  Application = 'Application'
 }

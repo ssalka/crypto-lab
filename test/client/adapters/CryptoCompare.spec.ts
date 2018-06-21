@@ -14,7 +14,7 @@ describe('CryptoCompareAdapter', () => {
   describe('#getCoins', () => {
     it('fetches basic info on a given list of coins', async done => {
       await api.getCoins();
-      const allCoinNames = _.map('CoinName', api.coins);
+      const allCoinNames = _.map('name', api.coins);
 
       coinNames.forEach(coinName => expect(allCoinNames).toContain(coinName));
 

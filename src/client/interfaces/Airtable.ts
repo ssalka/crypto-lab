@@ -1,4 +1,4 @@
-import { CurrencyCode, ProjectCategory, ProjectName, ProjectType } from './crypto';
+import { CurrencyCode, ProjectName } from './crypto';
 
 interface IAirtableLogo {
   id: string;
@@ -11,11 +11,11 @@ interface IAirtableThumbnail {
   height: number;
 }
 
-interface IAirtableAttachment {
+export interface IAirtableAttachment {
   filename: string;
   id: string;
   size: number;
-  thumbnails: Record<'large' | 'small', IAirtableThumbnail>;
+  thumbnails?: Record<'large' | 'small', IAirtableThumbnail>;
   type: string;
   url: string;
 }
@@ -24,7 +24,7 @@ export interface IAirtableCoin {
   Blockchain: string[];
   Bookmarks: string[];
   'Buy Target': string;
-  Category: ProjectCategory;
+  Category: string;
   'Consensus Mechanism': string;
   Contributors: string[];
   'Date Added': string;
@@ -54,7 +54,36 @@ export interface IAirtableCoin {
   Tags: string[];
   'Top 5': boolean;
   'Trading Notes': string[];
-  Type: ProjectType;
-  'Whitepaper(s)': IAirtableAttachment[];
+  Type: string;
+  Whitepapers: IAirtableAttachment[];
   'Written In': string[];
+}
+
+export interface INormalizedAirtableCoin {
+  blockchain: string[];
+  bookmarks: string[];
+  category: string;
+  consensusAlgorithm: string;
+  contributors: string[];
+  favorites: boolean;
+  features: string[];
+  forks: string[];
+  industry: string;
+  links: string;
+  listedOn: string[];
+  location: string;
+  logo: string;
+  name: ProjectName;
+  notes: string;
+  officialWebsite: string;
+  premise: string;
+  rank: number;
+  reasonsToLike: string[];
+  relatedActors: string[];
+  stage: string;
+  symbol: CurrencyCode;
+  tags: string[];
+  type: string;
+  whitepapers: IAirtableAttachment[];
+  writtenIn: string[];
 }

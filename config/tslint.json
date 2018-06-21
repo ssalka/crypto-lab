@@ -12,10 +12,7 @@
     "import-spacing": true,
     "jsx-no-multiline-js": false,
     "max-classes-per-file": false,
-    "max-line-length": [true, {
-      "limit": 120,
-      "ignore-pattern": "^import |^export"
-    }],
+    "max-line-length": false,
     "member-access": false,
     "member-ordering": [true, {
       "order": [

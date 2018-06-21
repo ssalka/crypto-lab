@@ -3,7 +3,8 @@ import _ from 'lodash/fp';
 
 import {
   CurrencyCode,
-  CoinMarketCapCoin
+  ICoinMarketCapCoin,
+  INormalizedCoinMarketCapCoin
 } from 'src/client/interfaces';
 
 export default class CoinMarketCapAdapter {
@@ -11,33 +12,45 @@ export default class CoinMarketCapAdapter {
 
   requestedCoins: CurrencyCode[] = [];
 
-  coins: CoinMarketCapCoin[] = [];
+  coins: INormalizedCoinMarketCapCoin[] = [];
 
-  allCoins: CoinMarketCapCoin[] = [];
+  allCoins: ICoinMarketCapCoin[] = [];
 
   setCoinList(coinNames: CurrencyCode[]) {
     this.requestedCoins = coinNames;
   }
 
-  async getCoins(): Promise<CoinMarketCapCoin[]> {
-    this.cacheCoins(await fetch('/cmc').then(_.invoke('json')));
+  async getCoins(): Promise<INormalizedCoinMarketCapCoin[]> {
+    const response = await fetch('/cmc').then(_.invoke('json'));
+    this.matchRequestedCoins(response);
 
     return this.coins;
   }
 
-  cacheCoins(allCoins: CoinMarketCapCoin[]) {
-    this.allCoins = allCoins;
-    this.coins = this.requestedCoins.map(this.findByName);
+  matchRequestedCoins(allCoins: ICoinMarketCapCoin[]) {
+    this.allCoins = _.values(allCoins);
+    this.coins = this.requestedCoins
+      .map(this.findByName)
+      .map(this.normalizeSchema);
   }
 
   @bind
-  findByName(symbol?: CurrencyCode): CoinMarketCapCoin {
-    if (!symbol) return;
-
+  findByName(symbol: CurrencyCode): ICoinMarketCapCoin {
     const primarySymbol = symbol
       .replace(/,.*$/g, '')
       .replace(CurrencyCode.IOTA, 'MIOTA');
 
-    return _.find({ symbol: primarySymbol } as Partial<CoinMarketCapCoin>, this.allCoins);
+    return _.find({ symbol: primarySymbol } as Partial<ICoinMarketCapCoin>, this.allCoins);
+  }
+
+  @bind
+  normalizeSchema(coin: ICoinMarketCapCoin | null): INormalizedCoinMarketCapCoin {
+    if (!coin) return null;
+
+    return {
+      ..._.pick(['name', 'symbol', 'rank'], coin),
+      marketCap: coin.quotes.USD.market_cap,
+      price: coin.quotes.USD.price
+    };
   }
 }

@@ -1,15 +1,15 @@
-import bind from 'bind-decorator';
 import _ from 'lodash/fp';
 
 import {
   ProjectName,
-  IAirtableCoin
+  IAirtableCoin,
+  INormalizedAirtableCoin
 } from 'src/client/interfaces';
 
 export default class AirtableAdapter {
   requestedCoins: ProjectName[] = [];
 
-  coins: IAirtableCoin[] = [];
+  coins: INormalizedAirtableCoin[] = [];
 
   allCoins: IAirtableCoin[] = [];
 
@@ -17,7 +17,7 @@ export default class AirtableAdapter {
     this.requestedCoins = coinNames;
   }
 
-  async getCoins(): Promise<IAirtableCoin[]> {
+  async getCoins(): Promise<INormalizedAirtableCoin[]> {
     try {
       this.cacheCoins(await fetch('/airtable').then(_.invoke('json')));
     }
@@ -30,11 +30,24 @@ export default class AirtableAdapter {
 
   cacheCoins(allCoins: IAirtableCoin[]) {
     this.allCoins = allCoins;
-    this.coins = _.compact(this.requestedCoins.map(this.findByName));
+    this.coins = _.flow(
+      _.filter('Symbol'),
+      _.map(_.mapKeys(_.camelCase)),
+      _.map(_.omit('marketCap')) // conflicts with cmc marketCap field
+    )(this.allCoins) as INormalizedAirtableCoin[];
+
+    // TODO: more functional way to override individual fields
+    _.filter('logo', this.coins).forEach(this.takeFirstLogo);
   }
 
-  @bind
-  findByName(Name: ProjectName): IAirtableCoin {
-    return _.find({ Name } as Partial<IAirtableCoin>, this.allCoins);
+  takeFirstLogo(coin) {
+    if (coin.logo.length) {
+      const logo: string = coin.logo[0].url;
+
+      coin.logo = logo;
+    }
+    else {
+      delete coin.logo;
+    }
   }
 }
