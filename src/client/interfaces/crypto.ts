@@ -4,8 +4,8 @@ import { INormalizedCryptoCompareCoin } from './CryptoCompare';
 
 export interface ICryptoAsset extends INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin {
   name: ProjectName;
-  price: number;
   logo: string;
+  price: number;
 }
 
 export type FieldName = keyof ICryptoAsset;

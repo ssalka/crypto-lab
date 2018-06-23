@@ -8,8 +8,10 @@ import {
   ProjectName,
   ICryptoCompareCoin,
   ICryptoCompareResponse,
-  Omit
+  Omit,
+  Optional
 } from 'src/client/interfaces';
+import compose from 'src/client/utils/compose';
 
 export default class CryptoCompareAdapter {
   static website = 'https://www.cryptocompare.com';
@@ -18,7 +20,7 @@ export default class CryptoCompareAdapter {
 
   requestedCoins: ProjectName[] = [];
 
-  coins: INormalizedCryptoCompareCoin[] = [];
+  coins: Optional<INormalizedCryptoCompareCoin>[] = [];
 
   allCoins: ICryptoCompareResponse['Data'] = {};
 
@@ -26,58 +28,30 @@ export default class CryptoCompareAdapter {
     this.requestedCoins = coinNames;
   }
 
-  async getCoins(): Promise<INormalizedCryptoCompareCoin[]> {
-    const response = await cc.coinList();
-    this.matchRequestedCoins(response);
+  async getCoins(): Promise<Optional<INormalizedCryptoCompareCoin>[]> {
+    const { Data: allCoins } = await cc.coinList();
+    this.allCoins = allCoins;
+    this.coins = this.matchRequestedCoins();
 
-    const prices = await this.fetchAllPrices(response);
+    const prices = await this.fetchAllPrices();
     this.updateCoinsWithPrices(prices);
 
     return this.coins;
   }
 
-  matchRequestedCoins({ Data: allCoins }: ICryptoCompareResponse) {
-    this.allCoins = allCoins;
-    this.coins = this.requestedCoins
+  matchRequestedCoins(): Optional<INormalizedCryptoCompareCoin>[] {
+    return this.requestedCoins
       .map(this.findByName)
-      .map(this.normalizeSchema);
+      .map(coin => coin && this.normalizeSchema(coin));
   }
 
   @bind
-  async fetchAllPrices(coins: ICryptoCompareCoin[]): Promise<number[]> {
-    const getPricefromSymbol = _.flow(
-      _.map('Symbol'),
-      _.map(this.getPrice)
-    );
-
-    return Promise.all(getPricefromSymbol(this.coins));
+  findByName(CoinName: ProjectName): Optional<ICryptoCompareCoin> {
+    return _.find({ CoinName } as ICryptoCompareCoin, this.allCoins);
   }
 
   @bind
-  async getPrice(coin: CurrencyCode, base: CurrencyCode = this.base): Promise<number> {
-    if (!this.allCoins[coin] || !this.allCoins[coin].IsTrading) return 0;
-
-    try {
-      const { [base]: price } = await cc.price(coin, base);
-
-      return price;
-    }
-    catch {
-      console.error('Unable to fetch price of', coin);
-
-      return 0;
-    }
-  }
-
-  @bind
-  findByName(CoinName: ProjectName): ICryptoCompareCoin {
-    return _.find({ CoinName } as ICryptoCompareCoin, this.allCoins) || null;
-  }
-
-  @bind
-  normalizeSchema(coin: ICryptoCompareCoin | null): Omit<INormalizedCryptoCompareCoin, 'price'> {
-    if (!coin) return null;
-
+  normalizeSchema(coin: ICryptoCompareCoin): Omit<INormalizedCryptoCompareCoin, 'price'> {
     return {
       name: coin.CoinName,
       symbol: coin.Symbol,
@@ -86,12 +60,40 @@ export default class CryptoCompareAdapter {
     };
   }
 
-  updateCoinsWithPrices(prices: number[]) {
+  @bind
+  fetchAllPrices(): Promise<ICryptoCompareCoin['price'][]> {
+    const mapCoinsToPromises = compose<CryptoCompareAdapter['coins'], Promise<Optional<number>>[]>(
+      _.map('Symbol'),
+      _.map(this.getPrice)
+    );
+
+    return Promise.all(mapCoinsToPromises(this.coins));
+  }
+
+  @bind
+  async getPrice(coin: CurrencyCode): Promise<Optional<number>> {
+    if (!this.allCoins[coin] || !this.allCoins[coin].IsTrading) return;
+
+    try {
+      const response = await cc.price(coin, this.base);
+
+      return response[this.base];
+    }
+    catch {
+      console.error('Unable to fetch price of', coin);
+
+      return 0;
+    }
+  }
+
+  updateCoinsWithPrices(prices: Optional<number>[]) {
     this.coins = _.zipWith(this.assignPrice)(this.coins, prices);
   }
 
   @bind
-  assignPrice(coin: Omit<INormalizedCryptoCompareCoin, 'price'>, price: number): INormalizedCryptoCompareCoin {
+  assignPrice(coin: Optional<Omit<INormalizedCryptoCompareCoin, 'price'>>, price?: number): Optional<INormalizedCryptoCompareCoin> {
+    if (!coin || !price) return coin;
+
     return { ...coin, price };
   }
 }

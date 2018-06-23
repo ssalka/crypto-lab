@@ -1,3 +1,4 @@
+import { includes } from 'lodash/fp';
 import path from 'path';
 import webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -36,7 +37,7 @@ const config = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __DEV__: !['production', 'test'].includes(process.env.NODE_ENV)
+      __DEV__: !includes(process.env.NODE_ENV, ['production', 'test'])
     }),
     new CopyWebpackPlugin([
       { from: 'src/client/index.html' }

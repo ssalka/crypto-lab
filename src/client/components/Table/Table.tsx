@@ -20,24 +20,19 @@ type TableClassName = TableClassKey | 'table' | 'row' | 'logo' | 'paginator';
 interface ITableProps {
   data: ICryptoAsset[];
   loading: boolean;
-  columnOrder?: FieldName[];
+  columnOrder: FieldName[];
   onRowClick?(event, row: ICryptoAsset): void;
 }
 
 interface ITableState {
-  order?: SortDirection;
-  orderBy?: string;
+  order: SortDirection;
+  orderBy: string;
   data: ICryptoAsset[];
   page: number;
   rowsPerPage: number;
 }
 
 type TableProps = ITableProps & WithStyles<TableClassName>;
-
-const initialState: Pick<ITableState, 'order' | 'page' | 'rowsPerPage'> = {
-  page: 0,
-  rowsPerPage: 25
-};
 
 class EnhancedTable extends React.Component<TableProps, ITableState> {
   static defaultProps = {
@@ -47,7 +42,10 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
   idKey = 'name';
 
   state: ITableState = {
-    ...initialState,
+    order: 'asc',
+    orderBy: this.idKey,
+    page: 0,
+    rowsPerPage: 25,
     data: this.props.data
   };
 

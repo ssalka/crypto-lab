@@ -67,7 +67,7 @@ export default class EnhancedTableHead extends React.Component<ITableHeadProps> 
                 {!_.isEmpty(options) && (
                   <TableHeaderMenu
                     header={id}
-                    items={options}
+                    items={options!}
                   />
                 )}
               </div>
