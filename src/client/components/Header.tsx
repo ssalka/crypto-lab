@@ -9,12 +9,11 @@ import { withStyles, WithStyles } from '@material-ui/core/styles';
 interface IAppHeaderProps {
   title: string;
   onMenuToggle: IconButtonProps['onClick'];
-  menuOpen?: boolean;
 }
 
 type HeaderProps = IAppHeaderProps & WithStyles<'menuIcon'>;
 
-const Header: SFC<HeaderProps> = ({ classes, title, onMenuToggle, menuOpen = false }) => (
+const Header: SFC<HeaderProps> = ({ classes, title, onMenuToggle }) => (
   <AppBar position="sticky" color="primary">
     <Toolbar disableGutters={true}>
       <IconButton

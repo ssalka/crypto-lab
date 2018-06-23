@@ -4,7 +4,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Nullable } from 'src/client/interfaces';
 

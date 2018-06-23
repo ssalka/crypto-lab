@@ -4,6 +4,7 @@
     "tslint-eslint-rules",
     "tslint-react"
   ],
+  "rulesDirectory": ["tslint-consistent-codestyle"],
   "rules": {
     "array-type": [true, "array"],
     "arrow-parens": false,
@@ -27,14 +28,20 @@
     "no-namespace": false,
     "no-duplicate-case": true,
     "no-sparse-arrays": true,
+    "no-unnecessary-type-annotation": [true, {
+      "check-return-type": true
+    }],
     "no-unused-expression": true,
     "no-unused-variable": true,
+    "no-var-before-return": true,
     "object-curly-spacing": [true, "always"],
     "object-literal-sort-keys": false,
     "object-literal-key-quotes": [true, "as-needed"],
     "only-arrow-functions": [true, "allow-named-functions"],
     "ordered-imports": false,
     "one-line": false,
+    "prefer-const": true,
+    "prefer-const-enum": true,
     "prefer-method-signature": true,
     "prefer-template": [true, "allow-single-concat"],
     "quotemark": [true, "single", "avoid-escape", "avoid-template", "jsx-double"],
@@ -49,6 +56,7 @@
     "ter-indent": [true, 2, {
       "SwitchCase": 1
     }],
+    "ter-padded-blocks": [true, "never"],
     "trailing-comma": "never",
     "variable-name": false
   }
