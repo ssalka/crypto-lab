@@ -23,10 +23,34 @@ describe('CryptoCompareAdapter', () => {
   });
 
   describe('#getPrice', () => {
+    const ETH = CurrencyCode.Ethereum;
+
     it('gets the current price of a given trading pair', async () => {
-      const price = await api.getPrice(CurrencyCode.Ethereum);
+      api.allCoins[ETH] = {
+        IsTrading: true
+      };
+
+      const price = await api.getPrice(ETH);
 
       expect(price).toEqual(expect.any(Number));
+    });
+
+    it("returns undefined if coin isn't found", async () => {
+      expect(api.allCoins[ETH]).toBeUndefined();
+
+      spyOn(api, 'getPrice');
+
+      expect(await api.getPrice(ETH)).toBeUndefined();
+    });
+
+    it("returns undefined if coin isn't trading", async () => {
+      api.allCoins[ETH] = {
+        IsTrading: false
+      };
+
+      spyOn(api, 'getPrice');
+
+      expect(await api.getPrice(ETH)).toBeUndefined();
     });
   });
 });

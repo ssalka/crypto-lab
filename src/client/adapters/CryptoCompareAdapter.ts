@@ -92,7 +92,7 @@ export default class CryptoCompareAdapter {
 
   @bind
   assignPrice(coin: Optional<Omit<INormalizedCryptoCompareCoin, 'price'>>, price?: number): Optional<INormalizedCryptoCompareCoin> {
-    if (!coin || !price) return;
+    if (!coin || !price) return coin;
 
     return { ...coin, price };
   }
