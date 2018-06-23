@@ -24,12 +24,12 @@ export default class CoinMarketCapAdapter {
   async getCoins(): Promise<Optional<INormalizedCoinMarketCapCoin>[]> {
     const response = await fetch('/cmc').then(_.invoke('json'));
     this.allCoins = _.values(response);
-    this.coins = this.matchRequestedCoins(response);
+    this.coins = this.matchRequestedCoins();
 
     return this.coins;
   }
 
-  matchRequestedCoins(allCoins: ICoinMarketCapCoin[]) {
+  matchRequestedCoins() {
     return this.requestedCoins
       .map(this.findByName)
       .map(coin => coin && this.normalizeSchema(coin));

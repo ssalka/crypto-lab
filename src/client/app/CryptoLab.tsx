@@ -112,7 +112,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
   View = (view: IView): JSX.Element => {
     // TODO: infer prop types from view
-    const props: any = this.getViewProps(view);
+    const props = this.getViewProps(view);
 
     switch (view.type) {
       case ViewType.Table:
@@ -134,11 +134,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
     return (
       <Theme type="light">
-        <Header
-          title="Crypto Lab"
-          menuOpen={drawerOpen}
-          onMenuToggle={toggleSideDrawer}
-        />
+        <Header title="Crypto Lab" onMenuToggle={toggleSideDrawer} />
         <div className={classes.root}>
           <SideDrawer
             open={drawerOpen}
