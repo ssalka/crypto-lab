@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { Nullable } from 'src/client/interfaces';
 
 interface IMenuItem {
   label: string;
@@ -17,21 +18,23 @@ export interface ITableHeaderMenuProps {
   items: IMenuItem[];
 }
 
-type TableHeaderMenuState = Pick<MenuProps, 'anchorEl'>;
+interface ITableHeaderMenuState {
+  anchor: Nullable<MenuProps['anchorEl']>;
+}
 
-export default class TableHeaderMenu extends React.Component<ITableHeaderMenuProps, TableHeaderMenuState> {
+export default class TableHeaderMenu extends React.Component<ITableHeaderMenuProps, ITableHeaderMenuState> {
   state = {
-    anchorEl: null
+    anchor: null
   };
 
   menuId = `table-header-menu-${_.kebabCase(this.props.header)}`;
 
   handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    this.setState({ anchor: event.currentTarget });
   }
 
   close = event => {
-    this.setState({ anchorEl: null });
+    this.setState({ anchor: null });
   }
 
   getCloseHandler = (action: IMenuItem['action']) => event => {
@@ -41,13 +44,13 @@ export default class TableHeaderMenu extends React.Component<ITableHeaderMenuPro
 
   render() {
     const { items } = this.props;
-    const { anchorEl } = this.state;
+    const { anchor } = this.state;
 
     return (
       <React.Fragment>
         <IconButton
           aria-label="More"
-          aria-owns={anchorEl ? this.menuId : null}
+          aria-owns={anchor ? this.menuId : ''}
           aria-haspopup="true"
           disabled={!items.length}
           onClick={this.handleClick}
@@ -57,8 +60,8 @@ export default class TableHeaderMenu extends React.Component<ITableHeaderMenuPro
 
         <Menu
           id={this.menuId}
-          anchorEl={anchorEl}
-          open={!!anchorEl}
+          anchorEl={anchor!}
+          open={!!anchor}
           onClose={this.close}
         >
           {items.map(({ label, action }) => (

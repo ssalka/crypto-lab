@@ -72,6 +72,11 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
 
   toOwnSchema({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset {
     // NOTE: need a way for the user to configure field overrides here
+    const defaults = {
+      price: 0,
+      marketCap: 0
+    };
+
     const customFields = {
       trading: cryptoCompare && cryptoCompare.trading
         || coinMarketCap && !!coinMarketCap.price
@@ -79,6 +84,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
     };
 
     return {
+      ...defaults,
       ...cryptoCompare,
       ...coinMarketCap,
       ...airtable,

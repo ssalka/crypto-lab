@@ -30,7 +30,7 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
   };
 
   toggleDrawerVariant = event => this.setState(state => {
-    if (this.props.open && state.permanent) {
+    if (this.props.open && state.permanent && this.props.onClose) {
       this.props.onClose(event);
     }
 

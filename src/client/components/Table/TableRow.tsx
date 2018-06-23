@@ -16,8 +16,8 @@ interface ITableRowProps extends Pick<HTMLProps<HTMLTableRowElement>, 'className
 
 // TODO: upgrade to TS 2.9, make component generic w/ conditional empty type
 interface IEmptyTableRowProps {
-  colSpan?: number;
-  rowSpan?: number;
+  colSpan: number;
+  rowSpan: number;
 }
 
 type TableRowProps = ITableRowProps | IEmptyTableRowProps;
