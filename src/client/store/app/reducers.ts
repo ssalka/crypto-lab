@@ -3,8 +3,8 @@ import _ from 'lodash/fp';
 import { ICryptoAsset } from 'src/client/interfaces';
 import { success } from 'src/client/store/utils';
 import { ILoaderResponse } from './epics';
-import initialState from './state';
-import { CryptoLabAction } from './types';
+import initialState, { IAppState } from './state';
+import { AppAction } from './types';
 
 function getCoinFromProviders({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset {
   // NOTE: need a way for the user to configure field overrides here
@@ -28,11 +28,12 @@ function getCoinFromProviders({ airtable, coinMarketCap, cryptoCompare }: ILoade
   };
 }
 
-export default (state = initialState, { type, payload }) => {
+export default (state = initialState, { type, payload }): IAppState => {
   switch (type) {
-    case success(CryptoLabAction.LoadCoins):
+    case success(AppAction.LoadCoins):
       return {
-        coins: payload.map(getCoinFromProviders)
+        coins: payload.map(getCoinFromProviders),
+        loading: false
       };
     default:
       return state;

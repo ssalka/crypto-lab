@@ -1,33 +1,31 @@
 import _ from 'lodash/fp';
-import React from 'react';
+import React, { Component, ComponentType } from 'react';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
 import { Project, Table, Header, SideDrawer } from 'src/client/components';
 import { ICryptoAsset, IView, ViewName, ViewType } from 'src/client/interfaces';
-import { ILoaderResponse, Loader } from './loader';
+import { IAppState, loadCoins } from 'src/client/store/app';
+import { connect } from 'src/client/store';
+import { compose } from 'src/client/utils';
 import Theme from './Theme';
 
 type CryptoLabClassName = 'root' | 'main';
 
-interface ICryptoLabProps {
-  loader: Loader;
+interface ICryptoLabProps extends IAppState {
+  loadCoins: typeof loadCoins;
 }
 
 export interface ICryptoLabState {
-  coins: ICryptoAsset[];
   drawerOpen: boolean;
-  loading: boolean;
   view: IView;
 }
 
 export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
 
-export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> {
-  state = {
-    coins: [],
+export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
+  state: ICryptoLabState = {
     drawerOpen: __DEV__,
-    loading: true,
     view: {
       name: ViewName.Coins,
       type: ViewType.Table,
@@ -38,8 +36,8 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
   static views: Record<ViewName, Record<ViewType, (props, state) => any>> = {
     [ViewName.Coins]: {
       [ViewType.Table]: (props, state) => ({
-        data: state.coins,
-        loading: state.loading
+        data: props.coins,
+        loading: props.loading
       }),
       [ViewType.Project]: (props, state) => {
         const { data: coin } = state.view.config;
@@ -65,31 +63,7 @@ export class CryptoLab extends React.Component<CryptoLabProps, ICryptoLabState> 
   }
 
   async componentDidMount() {
-    const response = await this.props.loader();
-    const coins = response.map(this.toOwnSchema);
-    this.setState({ coins, loading: false });
-  }
-
-  toOwnSchema({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset {
-    // NOTE: need a way for the user to configure field overrides here
-    const defaults = {
-      price: 0,
-      marketCap: 0
-    };
-
-    const customFields = {
-      trading: cryptoCompare && cryptoCompare.trading
-        || coinMarketCap && !!coinMarketCap.price
-        || !_.isEmpty(airtable.listedOn)
-    };
-
-    return {
-      ...defaults,
-      ...cryptoCompare,
-      ...coinMarketCap,
-      ...airtable,
-      ...customFields
-    };
+    this.props.loadCoins();
   }
 
   toggleSideDrawer = () => {
@@ -162,7 +136,14 @@ const styles: StyleRulesCallback<CryptoLabClassName> = theme => ({
   main: {
     flexGrow: 1,
     overflow: 'auto'
-  },
+  }
 });
 
-export default withStyles(styles)(CryptoLab);
+export default compose(
+  connect(
+    // TODO: break up store per aggregate type
+    store => store.app,
+    actions => actions.app
+  ),
+  withStyles(styles)
+)(CryptoLab) as ComponentType;

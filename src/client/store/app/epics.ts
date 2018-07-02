@@ -8,7 +8,7 @@ import CoinMarketCapAdapter from 'src/client/adapters/CoinMarketCapAdapter';
 import CryptoCompareAdapter from 'src/client/adapters/CryptoCompareAdapter';
 import { INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin } from 'src/client/interfaces';
 import { toSuccessAction } from 'src/client/store/utils';
-import { CryptoLabAction } from './types';
+import { AppAction } from './types';
 
 export interface ILoaderResponse {
   airtable: INormalizedAirtableCoin;
@@ -42,10 +42,10 @@ const loader: Loader = async () => {
 };
 
 export const loadCoinsEpic = action$ => action$.pipe(
-  ofType(CryptoLabAction.LoadCoins),
+  ofType(AppAction.LoadCoins),
   switchMap(
     action => from(loader()).pipe(
-      map(toSuccessAction(CryptoLabAction.LoadCoins))
+      map(toSuccessAction(AppAction.LoadCoins))
     )
   )
 );

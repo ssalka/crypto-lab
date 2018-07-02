@@ -1,6 +1,6 @@
 import { ActionCreator } from 'redux';
-import { CryptoLabAction, ICryptoLabAction } from './types';
+import { AppAction, IAppAction } from './types';
 
-export const loadCoins: ActionCreator<ICryptoLabAction> = () => ({
-  type: CryptoLabAction.LoadCoins
+export const loadCoins: ActionCreator<IAppAction> = () => ({
+  type: AppAction.LoadCoins
 });

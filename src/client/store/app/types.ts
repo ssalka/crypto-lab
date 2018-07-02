@@ -1,7 +1,7 @@
-export const enum CryptoLabAction {
+export const enum AppAction {
   LoadCoins = 'LOAD_COINS'
 }
 
-export interface ICryptoLabAction {
-  type: CryptoLabAction;
+export interface IAppAction {
+  type: AppAction;
 }
