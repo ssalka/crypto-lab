@@ -1,3 +1,3 @@
 export { loadCoins } from './actions';
-export { IAppState } from './state';
+export { default as initialState, IAppState } from './state';
 export * from './types';
