@@ -2,11 +2,11 @@ import _ from 'lodash/fp';
 
 import { ICryptoAsset } from 'src/client/interfaces';
 import { success } from 'src/client/store/utils';
-import { ILoaderResponse } from './epics';
+import { IFetchCoinsResponse } from './api';
 import initialState, { IAppState } from './state';
 import { AppAction } from './types';
 
-function getCoinFromProviders({ airtable, coinMarketCap, cryptoCompare }: ILoaderResponse): ICryptoAsset {
+function getCoinFromProviders({ airtable, coinMarketCap, cryptoCompare }: IFetchCoinsResponse): ICryptoAsset {
   // NOTE: need a way for the user to configure field overrides here
   const defaults = {
     price: 0,

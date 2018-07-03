@@ -1,13 +1,9 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import { CryptoLab, CryptoLabProps, ICryptoLabProps } from 'src/client/app/CryptoLab';
-import { Loader } from 'src/client/app/loader';
-import { ProjectName } from 'src/client/interfaces';
+import { CryptoLab, CryptoLabProps } from 'src/client/app/CryptoLab';
 import { AppAction, initialState, loadCoins } from 'src/client/store/app';
 
-
 describe('CryptoLab', () => {
-  const coinNames = [ProjectName.BTC, ProjectName.ETH];
   let loadCoinsSpy: jest.FunctionLike;
   let cryptoLab: ReturnType<typeof getComponent>;
 
