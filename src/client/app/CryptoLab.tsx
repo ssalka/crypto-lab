@@ -1,5 +1,5 @@
 import _ from 'lodash/fp';
-import React, { Component, ComponentType } from 'react';
+import React, { Component, ComponentType, Fragment } from 'react';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
@@ -8,7 +8,6 @@ import { ICryptoAsset, IView, ViewName, ViewType } from 'src/client/interfaces';
 import { IAppState, loadCoins } from 'src/client/store/app';
 import { connect } from 'src/client/store';
 import { compose } from 'src/client/utils';
-import Theme from './Theme';
 
 type CryptoLabClassName = 'root' | 'main';
 
@@ -107,7 +106,7 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
     const { drawerOpen, view } = this.state;
 
     return (
-      <Theme type="light">
+      <Fragment>
         <Header title="Crypto Lab" onMenuToggle={toggleSideDrawer} />
         <div className={classes.root}>
           <SideDrawer
@@ -120,7 +119,7 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
             <View {...view} />
           </main>
         </div>
-      </Theme>
+      </Fragment>
     );
   }
 }

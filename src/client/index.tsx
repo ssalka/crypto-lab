@@ -1,12 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import { CryptoLab } from './app';
-import { StoreProvider } from './store';
+import App from './app';
 
 render(
-  <StoreProvider>
-    <CryptoLab />
-  </StoreProvider>,
+  <App />,
   document.getElementById('root')
 );
