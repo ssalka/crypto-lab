@@ -1,2 +1,5 @@
-export { default as StoreProvider } from './Provider';
+import store from './store';
+
 export * from './utils';
+
+export default store;
