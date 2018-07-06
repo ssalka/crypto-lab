@@ -3,21 +3,17 @@ import _ from 'lodash/fp';
 import AirtableAdapter from 'src/client/adapters/AirtableAdapter';
 import CoinMarketCapAdapter from 'src/client/adapters/CoinMarketCapAdapter';
 import CryptoCompareAdapter from 'src/client/adapters/CryptoCompareAdapter';
-import {
-  INormalizedAirtableCoin,
-  INormalizedCoinMarketCapCoin,
-  INormalizedCryptoCompareCoin
-} from 'src/client/interfaces';
+import { INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin } from 'src/client/interfaces';
 
-interface ILoaderResponse {
+export interface IFetchCoinsResponse {
   airtable: INormalizedAirtableCoin;
   coinMarketCap?: INormalizedCoinMarketCapCoin;
   cryptoCompare?: INormalizedCryptoCompareCoin;
 }
 
-type Loader = () => Promise<ILoaderResponse[]>;
+export type Fetch<T> = () => Promise<T>;
 
-const loader: Loader = async () => {
+export const fetchCoins: Fetch<IFetchCoinsResponse[]> = async () => {
   const airtable = new AirtableAdapter();
 
   if (!await airtable.getCoins()) return [];
@@ -38,11 +34,4 @@ const loader: Loader = async () => {
     coinMarketCap: coinMarketCap.coins[i],
     cryptoCompare: cryptoCompare.coins[i]
   }));
-};
-
-export default loader;
-
-export {
-  ILoaderResponse,
-  Loader
 };

@@ -1,8 +1,5 @@
-export {
-  default as CryptoLab
-} from './CryptoLab';
+import App from './App';
 
-export {
-  default as loader,
-  Loader
-} from './loader';
+export { default as CryptoLab } from './CryptoLab';
+
+export default App;

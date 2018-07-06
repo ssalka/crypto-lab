@@ -3,10 +3,6 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "./dist",
-    "target": "ES2016",
-    "types": [
-      "express",
-      "node"
-    ]
+    "target": "ES2016"
   }
 }
