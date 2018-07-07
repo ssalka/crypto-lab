@@ -20,7 +20,7 @@ type TableClassName = TableClassKey | 'table' | 'row' | 'logo' | 'paginator';
 interface ITableProps {
   data: ICryptoAsset[];
   loading: boolean;
-  columnOrder: FieldName[];
+  columnOrder?: FieldName[];
   onRowClick?(event, row: ICryptoAsset): void;
 }
 
@@ -134,16 +134,16 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
   }
 
   render() {
-    const { classes, columnOrder } = this.props;
+    const { classes, columnOrder, loading } = this.props;
     const { data, order, orderBy, page, rowsPerPage } = this.state;
-    const emptyRows = this.getEmptyRowCount();
+    const emptyRows = loading ? rowsPerPage : this.getEmptyRowCount();
 
     return (
       <React.Fragment>
         <div className={classes.root}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <TableHead
-              headers={columnOrder.map(field => ({ id: field, label: field }))}
+              headers={columnOrder!.map(field => ({ id: field, label: field }))}
               order={order}
               orderBy={orderBy}
               onRequestSort={this.handleRequestSort}
@@ -151,7 +151,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                 <TableRow
-                  columnOrder={columnOrder}
+                  columnOrder={columnOrder!}
                   data={row}
                   className={classes.row}
                   onClick={this.createRowClickHandler(row)}
@@ -159,7 +159,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
                 />
               ))}
               {!!emptyRows && (
-                <TableRow colSpan={columnOrder.length} rowSpan={emptyRows} />
+                <TableRow colSpan={columnOrder!.length} rowSpan={emptyRows} />
               )}
             </TableBody>
           </Table>
@@ -206,4 +206,5 @@ const styles: StyleRulesCallback<TableClassName> = theme => ({
     backgroundColor: theme.palette.grey[200]
   }
 });
+
 export default withStyles(styles)(EnhancedTable) as ComponentType<ITableProps>;
