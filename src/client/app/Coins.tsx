@@ -1,11 +1,12 @@
 import _ from 'lodash/fp';
-import React, { Component, Fragment, SFC } from 'react';
+import React, { Component, ComponentType, Fragment, SFC } from 'react';
 import { Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { Project, Table } from 'src/client/components';
 import { ICryptoAsset, ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
 import { IAppState } from 'src/client/store/app';
+import { compose } from 'src/client/utils';
 
 type CoinsProps = IAppState & RouteComponentProps<{}>;
 
@@ -62,6 +63,7 @@ export class Coins extends Component<CoinsProps> {
   }
 }
 
-const ConnectedCoins = connect(store => store.app)(Coins);
-
-export default withRouter(ConnectedCoins) as typeof ConnectedCoins & Pick<typeof Coins, 'toExactPath'>;
+export default compose(
+  connect(store => store.app),
+  withRouter
+)(Coins) as ComponentType & Pick<typeof Coins, 'toExactPath'>;

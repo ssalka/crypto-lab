@@ -1,5 +1,5 @@
-import _ from 'lodash/fp';
 import React, { Component, ComponentType, Fragment } from 'react';
+import { Route, withRouter } from 'react-router-dom';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
@@ -8,7 +8,7 @@ import { ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
 import { IAppState, loadCoins } from 'src/client/store/app';
 import { compose } from 'src/client/utils';
-import Router from './Router';
+import Coins from './Coins';
 
 type CryptoLabClassName = 'root' | 'main';
 
@@ -58,10 +58,13 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
             }}
           />
           <main className={classes.main}>
-            {
+            {!loading && (
               // TODO: loading spinner
-              !loading && <Router />
-            }
+              <Fragment>
+                <Route exact={true} path="/" render={Coins.toExactPath} />
+                <Route path="/coins" component={Coins} />
+              </Fragment>
+            )}
           </main>
         </div>
       </Fragment>
@@ -89,5 +92,6 @@ export default compose(
     store => store.app,
     actions => actions.app
   ),
-  withStyles(styles)
+  withStyles(styles),
+  withRouter
 )(CryptoLab) as ComponentType;
