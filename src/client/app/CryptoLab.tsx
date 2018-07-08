@@ -1,5 +1,6 @@
 import React, { Component, ComponentType, Fragment } from 'react';
-import { Route, withRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { nest } from 'recompose';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
@@ -9,6 +10,8 @@ import { connect } from 'src/client/store';
 import { IAppState, loadCoins } from 'src/client/store/app';
 import { compose } from 'src/client/utils';
 import Coins from './Coins';
+
+const Router: typeof BrowserRouter = nest(BrowserRouter, Fragment);
 
 type CryptoLabClassName = 'root' | 'main';
 
@@ -43,13 +46,12 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
     const { drawerOpen } = this.state;
 
     return (
-      <Fragment>
+      <Router>
         <Header title="Crypto Lab" onMenuToggle={toggleSideDrawer} />
         <div className={classes.root}>
           <SideDrawer
             open={drawerOpen}
             onClose={toggleSideDrawer}
-            onSelectView={_.noop}
             selectedView={{
               // TODO: move to redux
               name: ViewName.Coins,
@@ -67,7 +69,7 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
             )}
           </main>
         </div>
-      </Fragment>
+      </Router>
     );
   }
 }
@@ -92,6 +94,5 @@ export default compose(
     store => store.app,
     actions => actions.app
   ),
-  withStyles(styles),
-  withRouter
+  withStyles(styles)
 )(CryptoLab) as ComponentType;
