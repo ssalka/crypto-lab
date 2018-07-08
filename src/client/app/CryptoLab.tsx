@@ -3,63 +3,29 @@ import React, { Component, ComponentType, Fragment } from 'react';
 
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 
-import { Project, Table, Header, SideDrawer } from 'src/client/components';
-import { ICryptoAsset, IView, ViewName, ViewType } from 'src/client/interfaces';
-import { IAppState, loadCoins } from 'src/client/store/app';
+import { Header, SideDrawer } from 'src/client/components';
+import { ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
+import { IAppState, loadCoins } from 'src/client/store/app';
 import { compose } from 'src/client/utils';
+import Router from './Router';
 
 type CryptoLabClassName = 'root' | 'main';
 
-interface ICryptoLabProps extends IAppState {
+interface ICryptoLabActions {
   loadCoins: typeof loadCoins;
 }
 
 export interface ICryptoLabState {
   drawerOpen: boolean;
-  view: IView;
 }
 
-export type CryptoLabProps = ICryptoLabProps & WithStyles<CryptoLabClassName>;
+export type CryptoLabProps = IAppState & ICryptoLabActions & WithStyles<CryptoLabClassName>;
 
 export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
   state: ICryptoLabState = {
-    drawerOpen: __DEV__,
-    view: {
-      name: ViewName.Coins,
-      type: ViewType.Table,
-      config: {}
-    }
+    drawerOpen: __DEV__
   };
-
-  static views: Record<ViewName, Record<ViewType, (props, state) => any>> = {
-    [ViewName.Coins]: {
-      [ViewType.Table]: (props, state) => ({
-        data: props.coins,
-        loading: props.loading
-      }),
-      [ViewType.Project]: (props, state) => {
-        const { data: coin } = state.view.config;
-
-        return !coin ? null : {
-          ...coin,
-          website: coin.officialWebsite
-        };
-      }
-    }
-  };
-
-  getViewProps({ name, type }: IView) {
-    if (_.has(`${name}.${type}`, CryptoLab.views)) {
-      const getProps = CryptoLab.views[name][type];
-
-      return getProps(this.props, this.state);
-    }
-
-    console.warn('Unsupported view options:', { name, type });
-
-    return null;
-  }
 
   async componentDidMount() {
     this.props.loadCoins();
@@ -71,39 +37,10 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
     }));
   }
 
-  updateView = (name: ViewName, type: ViewType, config: IView['config'] = {}) => {
-    this.setState<'view'>({
-      view: { name, type, config }
-    });
-  }
-
-  goToProject = (event, project: ICryptoAsset) => {
-    this.updateView(ViewName.Coins, ViewType.Project, {
-      data: project
-    });
-  }
-
-  View = (view: IView): JSX.Element => {
-    // TODO: infer prop types from view
-    const props = this.getViewProps(view);
-
-    switch (view.type) {
-      case ViewType.Table:
-        return (
-          <Table
-            {...props}
-            onRowClick={this.goToProject}
-          />
-        );
-      case ViewType.Project:
-        return <Project {...props} />;
-    }
-  }
-
   render() {
-    const { toggleSideDrawer, updateView, View } = this;
-    const { classes } = this.props;
-    const { drawerOpen, view } = this.state;
+    const { toggleSideDrawer } = this;
+    const { classes, loading } = this.props;
+    const { drawerOpen } = this.state;
 
     return (
       <Fragment>
@@ -112,11 +49,19 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
           <SideDrawer
             open={drawerOpen}
             onClose={toggleSideDrawer}
-            onSelectView={updateView}
-            selectedView={view}
+            onSelectView={_.noop}
+            selectedView={{
+              // TODO: move to redux
+              name: ViewName.Coins,
+              type: ViewType.Table,
+              config: {}
+            }}
           />
           <main className={classes.main}>
-            <View {...view} />
+            {
+              // TODO: loading spinner
+              !loading && <Router />
+            }
           </main>
         </div>
       </Fragment>
