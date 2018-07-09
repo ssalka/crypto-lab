@@ -6,33 +6,22 @@ import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/st
 
 import { Header, SideDrawer } from 'src/client/components';
 import { ViewName, ViewType } from 'src/client/interfaces';
-import { connect } from 'src/client/store';
-import { IAppState, loadCoins } from 'src/client/store/app';
-import { compose } from 'src/client/utils';
 import Coins from './Coins';
 
 const Router: typeof BrowserRouter = nest(BrowserRouter, Fragment);
 
 type CryptoLabClassName = 'root' | 'main';
 
-interface ICryptoLabActions {
-  loadCoins: typeof loadCoins;
-}
-
 export interface ICryptoLabState {
   drawerOpen: boolean;
 }
 
-export type CryptoLabProps = IAppState & ICryptoLabActions & WithStyles<CryptoLabClassName>;
+export type CryptoLabProps = WithStyles<CryptoLabClassName>;
 
 export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
   state: ICryptoLabState = {
     drawerOpen: __DEV__
   };
-
-  async componentDidMount() {
-    this.props.loadCoins();
-  }
 
   toggleSideDrawer = () => {
     this.setState<'drawerOpen'>(prevState => ({
@@ -42,7 +31,7 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
 
   render() {
     const { toggleSideDrawer } = this;
-    const { classes, loading } = this.props;
+    const { classes } = this.props;
     const { drawerOpen } = this.state;
 
     return (
@@ -60,13 +49,8 @@ export class CryptoLab extends Component<CryptoLabProps, ICryptoLabState> {
             }}
           />
           <main className={classes.main}>
-            {!loading && (
-              // TODO: loading spinner
-              <Fragment>
-                <Route exact={true} path="/" render={Coins.toExactPath} />
-                <Route path="/coins" component={Coins} />
-              </Fragment>
-            )}
+            <Route exact={true} path="/" render={Coins.toExactPath} />
+            <Route path="/coins" component={Coins} />
           </main>
         </div>
       </Router>
@@ -88,11 +72,4 @@ const styles: StyleRulesCallback<CryptoLabClassName> = theme => ({
   }
 });
 
-export default compose(
-  connect(
-    // TODO: break up store per aggregate type
-    store => store.app,
-    actions => actions.app
-  ),
-  withStyles(styles)
-)(CryptoLab) as ComponentType;
+export default withStyles(styles)(CryptoLab) as ComponentType;

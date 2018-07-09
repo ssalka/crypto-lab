@@ -5,13 +5,17 @@ import { Redirect, Route, RouteComponentProps, withRouter } from 'react-router-d
 import { Project, Table } from 'src/client/components';
 import { ICryptoAsset, ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
-import { IAppState } from 'src/client/store/app';
+import { IAppActions, IAppState } from 'src/client/store/app';
 import { compose } from 'src/client/utils';
 
-type CoinsProps = IAppState & RouteComponentProps<{}>;
+type CoinsProps = IAppState & IAppActions & RouteComponentProps<{}>;
 
 export class Coins extends Component<CoinsProps> {
   static toExactPath = () => <Redirect to="/coins" />;
+
+  async componentDidMount() {
+    this.props.loadCoins();
+  }
 
   goToProjectView = (event, project: ICryptoAsset) => {
     const coinId = _.kebabCase(project.name); // TODO: formalize
@@ -64,6 +68,10 @@ export class Coins extends Component<CoinsProps> {
 }
 
 export default compose(
-  connect(store => store.app),
+  connect(
+    // TODO: move to `coins` path
+    store => store.app,
+    actions => actions.app
+  ),
   withRouter
 )(Coins) as ComponentType & Pick<typeof Coins, 'toExactPath'>;

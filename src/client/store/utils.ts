@@ -1,12 +1,8 @@
 import { ComponentType } from 'react';
 import { connect as reduxConnect } from 'react-redux';
 import { Action, bindActionCreators } from 'redux';
-import * as appActions from './app/actions';
+import * as allActions from './actions';
 import { IStoreState } from './state';
-
-const allActions = {
-  app: appActions
-};
 
 function bindActions(mapActionsToProps) {
   return dispatch => bindActionCreators(
@@ -17,7 +13,7 @@ function bindActions(mapActionsToProps) {
 
 export function connect<S, A = {}>(
   mapStateToProps: (store: IStoreState) => S,
-  mapActionsToProps?: (actions: typeof allActions) => A
+  mapActionsToProps?: (actions: allActions.IStoreActionsMap) => A
 ): <P>(Component: ComponentType<P>) => ComponentType<P & S> {
   return reduxConnect(
     mapStateToProps,
