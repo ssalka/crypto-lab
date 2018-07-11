@@ -2,6 +2,8 @@ import _ from 'lodash/fp';
 import React, { Component, ComponentType, Fragment, SFC } from 'react';
 import { Redirect, Route, RouteComponentProps, withRouter } from 'react-router-dom';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import { Project, Table } from 'src/client/components';
 import { ICryptoAsset, ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
@@ -31,7 +33,13 @@ export class Coins extends Component<CoinsProps> {
     });
   }
 
-  ProjectView = () => {
+  Loading: SFC = () => (
+    <div style={styles.loading}>
+      <CircularProgress size={100} />
+    </div>
+  )
+
+  ProjectView: SFC = () => {
     const { state } = this.props.location;
 
     if (_.isEmpty(this.props.location.state)) return Coins.toExactPath();
@@ -55,17 +63,27 @@ export class Coins extends Component<CoinsProps> {
   )
 
   render() {
-    const { ProjectView, TableView } = this;
-    const { match } = this.props;
+    const { Loading, ProjectView, TableView } = this;
+    const { loading, match } = this.props;
 
-    return (
+    return loading ? <Loading /> : (
       <Fragment>
         <Route exact={true} path={match.path} component={TableView} />
-        <Route path={`${match.path}/:coinId`} render={ProjectView} />
+        <Route path={`${match.path}/:coinId`} component={ProjectView} />
       </Fragment>
     );
   }
 }
+
+const styles = {
+  loading: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+};
 
 export default compose(
   connect(
