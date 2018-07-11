@@ -1,15 +1,15 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import { CryptoLab, CryptoLabProps } from 'src/client/app/CryptoLab';
+import { Coins, CoinsProps } from 'src/client/app/Coins';
 import { AppAction, initialState, loadCoins } from 'src/client/store/app';
 
-describe('CryptoLab', () => {
+describe('Coins', () => {
   let loadCoinsSpy: jest.FunctionLike;
   let cryptoLab: ReturnType<typeof getComponent>;
 
   function getComponent() {
-    return mount<CryptoLabProps, ICryptoLabState>(
-      <CryptoLab
+    return mount<CoinsProps, ICoinsState>(
+      <Coins
         classes={{}}
         loadCoins={loadCoinsSpy}
         {...initialState}

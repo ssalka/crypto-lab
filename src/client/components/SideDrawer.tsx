@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { Component, ComponentType } from 'react';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import Drawer, { DrawerClassKey, DrawerProps } from '@material-ui/core/Drawer';
@@ -14,9 +15,9 @@ import MoneyIcon from '@material-ui/icons/MonetizationOn';
 import TableIcon from '@material-ui/icons/List';
 
 import { IView, ViewName, ViewType } from 'src/client/interfaces';
+import { compose } from 'src/client/utils';
 
-interface ISideDrawerProps extends Pick<DrawerProps, 'open' | 'onClose'>, WithStyles<SideDrawer.Classes> {
-  onSelectView(name: ViewName, type: ViewType): void;
+interface ISideDrawerProps extends Pick<DrawerProps, 'open' | 'onClose'> {
   selectedView: IView;
 }
 
@@ -24,7 +25,7 @@ interface ISideDrawerState {
   permanent: boolean;
 }
 
-class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
+class SideDrawer extends Component<SideDrawer.Props, ISideDrawerState> {
   state: ISideDrawerState = {
     permanent: __DEV__
   };
@@ -40,7 +41,7 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
   })
 
   createClickHandler(name: ViewName, type: ViewType = ViewType.Table) {
-    return () => this.props.onSelectView(name, type);
+    return () => this.props.history.push('/' + name.toLowerCase());
   }
 
   render() {
@@ -74,7 +75,7 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
               <ListItem
                 button={true}
                 dense={true}
-                onClick={this.createClickHandler(ViewName.Coins, ViewType.Table)}
+                onClick={this.createClickHandler(ViewName.Coins)}
                 className={classes.nested}
               >
                 <ListItemIcon
@@ -112,7 +113,9 @@ class SideDrawer extends React.Component<ISideDrawerProps, ISideDrawerState> {
 }
 
 namespace SideDrawer {
-  export type Classes = Extract<DrawerClassKey, 'paper'> | 'permanent' | 'closed' | 'keepVisible' | 'nested' | 'selected';
+  type Classes = Extract<DrawerClassKey, 'paper'> | 'permanent' | 'closed' | 'keepVisible' | 'nested' | 'selected';
+
+  export type Props = ISideDrawerProps & RouteComponentProps<{}> & WithStyles<Classes>;
 
   const width = 240;
 
@@ -157,4 +160,7 @@ namespace SideDrawer {
   });
 }
 
-export default withStyles(SideDrawer.styles)(SideDrawer);
+export default compose(
+  withStyles(SideDrawer.styles),
+  withRouter
+)(SideDrawer) as ComponentType<ISideDrawerProps>;

@@ -1,10 +1,8 @@
+import { ComponentType } from 'react';
 import { connect as reduxConnect } from 'react-redux';
 import { Action, bindActionCreators } from 'redux';
-import * as appActions from './app/actions';
-
-const allActions = {
-  app: appActions
-};
+import * as allActions from './actions';
+import { IStoreState } from './state';
 
 function bindActions(mapActionsToProps) {
   return dispatch => bindActionCreators(
@@ -13,11 +11,14 @@ function bindActions(mapActionsToProps) {
   );
 }
 
-export function connect<S, A>(
-  mapStateToProps: (store: any) => S,
-  mapActionsToProps: (actions: typeof allActions) => A
-) {
-  return reduxConnect(mapStateToProps, bindActions(mapActionsToProps));
+export function connect<S, A = {}>(
+  mapStateToProps: (store: IStoreState) => S,
+  mapActionsToProps?: (actions: allActions.IStoreActionsMap) => A
+): <P>(Component: ComponentType<P>) => ComponentType<P & S> {
+  return reduxConnect(
+    mapStateToProps,
+    mapActionsToProps ? bindActions(mapActionsToProps) : () => ({})
+  );
 }
 
 const enum RequestStatus {
