@@ -3,15 +3,13 @@ import _ from 'lodash/fp';
 import AirtableAdapter from 'src/client/adapters/AirtableAdapter';
 import CoinMarketCapAdapter from 'src/client/adapters/CoinMarketCapAdapter';
 import CryptoCompareAdapter from 'src/client/adapters/CryptoCompareAdapter';
-import { INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin } from 'src/client/interfaces';
+import { Fetch, INormalizedAirtableCoin, INormalizedCoinMarketCapCoin, INormalizedCryptoCompareCoin } from 'src/client/interfaces';
 
 export interface IFetchCoinsResponse {
   airtable: INormalizedAirtableCoin;
   coinMarketCap?: INormalizedCoinMarketCapCoin;
   cryptoCompare?: INormalizedCryptoCompareCoin;
 }
-
-export type Fetch<T> = () => Promise<T>;
 
 export const fetchCoins: Fetch<IFetchCoinsResponse[]> = async () => {
   const airtable = new AirtableAdapter();
