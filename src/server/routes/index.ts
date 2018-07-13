@@ -14,6 +14,8 @@ const flatMapToValues = _.flatMap(({ data }) => _.values(data));
 
 router.get('/airtable/coins', airtable.getCoins);
 
+router.get('/airtable/entities', airtable.getEntities);
+
 router.get('/cmc', async (req, res) => {
   const responses: ICoinMarketCapResponse[] = await Promise.all(
     _.times(_.multiply(100), 15).map(start => cmc.getTicker({ start }))

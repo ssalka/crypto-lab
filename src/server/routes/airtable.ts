@@ -2,7 +2,7 @@ import Airtable from 'airtable';
 import { RequestHandler } from 'express';
 import _ from 'lodash/fp';
 
-import { IAirtableCoin } from 'src/client/interfaces/Airtable';
+import { IAirtableCoin, IAirtableEntity } from 'src/client/interfaces/Airtable';
 
 const { AIRTABLE_API_KEY, AIRTABLE_CYRPTO_TABLE_ID } = process.env;
 
@@ -41,6 +41,8 @@ function createRequestHandler<T>(tableName: string, params?: IQueryParams): Requ
       );
   };
 }
+
+export const getEntities: RequestHandler = createRequestHandler<IAirtableEntity[]>('Entities');
 
 export const getCoins: RequestHandler = createRequestHandler<IAirtableCoin[]>('Coins', {
   sort: [{

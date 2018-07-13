@@ -87,3 +87,9 @@ export interface INormalizedAirtableCoin {
   whitepapers: IAirtableAttachment[];
   writtenIn: string[];
 }
+
+export interface IAirtableEntity {
+  ID: string;
+  Name: string;
+  Cryptocurrency: IAirtableCoin;
+}
