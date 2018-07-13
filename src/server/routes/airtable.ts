@@ -4,31 +4,47 @@ import _ from 'lodash/fp';
 
 import { IAirtableCoin } from 'src/client/interfaces/Airtable';
 
-const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
-  .base(process.env.AIRTABLE_CYRPTO_TABLE_ID)
-  .table('Coins');
+const { AIRTABLE_API_KEY, AIRTABLE_CYRPTO_TABLE_ID } = process.env;
+
+const airtable = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_CYRPTO_TABLE_ID);
 
 const mapToFields = _.map('fields');
 
-export const getCoins: RequestHandler = async (req, res) => {
-  const results: IAirtableCoin[] = [];
+interface IAirtableSortParams {
+  field: string;
+  direction: 'asc' | 'desc';
+}
 
-  function addPage(page) {
-    results.push(...mapToFields(page));
-  }
+interface IQueryParams {
+  sort?: IAirtableSortParams[];
+}
 
-  airtable
-    .select({
-      sort: [{
-        field: 'Rank',
-        direction: 'asc'
-      }],
-      view: 'Main'
-    })
-    .eachPage(
-      (records, next) => (addPage(records), next()),
-      error => error
-        ? res.status(500).send(error)
-        : res.json(results)
-    );
-};
+function createRequestHandler<T>(tableName: string, params?: IQueryParams): RequestHandler {
+  return (req, res) => {
+    const results: T[] = [];
+
+    function addPage(page) {
+      results.push(...mapToFields(page));
+    }
+
+    airtable
+      .table(tableName)
+      .select({
+        ...params,
+        view: 'Main'
+      })
+      .eachPage(
+        (records, next) => (addPage(records), next()),
+        error => error
+          ? res.status(500).send(error)
+          : res.json(results)
+      );
+  };
+}
+
+export const getCoins: RequestHandler = createRequestHandler<IAirtableCoin[]>('Coins', {
+  sort: [{
+    field: 'Rank',
+    direction: 'asc'
+  }]
+});

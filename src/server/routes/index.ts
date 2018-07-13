@@ -4,7 +4,7 @@ import _ from 'lodash/fp';
 
 import { ICoinMarketCapCoin, ICoinMarketCapResponse } from 'src/client/interfaces/CoinMarketCap';
 import { indexHtml } from '../config';
-import { getCoins } from './airtable';
+import * as airtable from './airtable';
 
 const cmc = new CoinMarketCap();
 
@@ -12,7 +12,7 @@ const router = Router();
 
 const flatMapToValues = _.flatMap(({ data }) => _.values(data));
 
-router.get('/airtable', getCoins);
+router.get('/airtable/coins', airtable.getCoins);
 
 router.get('/cmc', async (req, res) => {
   const responses: ICoinMarketCapResponse[] = await Promise.all(
