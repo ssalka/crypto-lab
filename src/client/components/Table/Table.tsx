@@ -1,5 +1,5 @@
 import _ from 'lodash/fp';
-import React, { ComponentType, ReactNode } from 'react';
+import React, { Component, ComponentType, Fragment, ReactNode } from 'react';
 
 import Table, { TableClassKey } from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,6 +9,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import { withStyles, StyleRulesCallback, WithStyles } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
 
+import { Omit } from 'src/client/interfaces';
 import { ICryptoAsset, FieldName } from 'src/client/interfaces/crypto';
 import { formatUSD } from 'src/client/utils';
 import TableHead from './TableHead';
@@ -25,32 +26,38 @@ interface ITableProps {
 }
 
 interface ITableState {
+  data: ICryptoAsset[];
   order: SortDirection;
   orderBy: string;
-  data: ICryptoAsset[];
   page: number;
   rowsPerPage: number;
 }
 
 type TableProps = ITableProps & WithStyles<TableClassName>;
 
-class EnhancedTable extends React.Component<TableProps, ITableState> {
+const [initialSortOrder, reverseSortOrder]: SortDirection[] = ['asc', 'desc'];
+
+class EnhancedTable extends Component<TableProps, ITableState> {
   static defaultProps = {
     columnOrder: columns.defaultOrder
+  };
+
+  static initialState: Omit<ITableState, 'data'> = {
+    order: initialSortOrder,
+    orderBy: columns.numerical[0],
+    page: 0,
+    rowsPerPage: 25
   };
 
   idKey = 'name';
 
   state: ITableState = {
-    order: 'asc',
-    orderBy: this.idKey,
-    page: 0,
-    rowsPerPage: 25,
-    data: this.props.data
+    ...EnhancedTable.initialState,
+    data: _.sortBy<ICryptoAsset>(EnhancedTable.initialState.orderBy)(this.props.data)
   };
 
   compareItems = (prev, next) => {
-    return prev[this.state.orderBy] === next[this.state.orderBy];
+    return prev[this.idKey] === next[this.idKey];
   }
 
   dataChanged(prevData, nextData) {
@@ -70,16 +77,16 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     }
   }
 
-  handleRequestSort = (event, orderBy: string, nextData?: ITableState['data']) => {
-    const reverseOrder = this.state.orderBy === orderBy && this.state.order === 'asc';
-    const order: SortDirection = reverseOrder ? 'desc' : 'asc';
+  handleRequestSort = (event, orderBy: string) => {
+    const reverseOrder = orderBy === this.state.orderBy && this.state.order === initialSortOrder;
 
-    const sort: (items: ICryptoAsset[]) => ICryptoAsset[] = _.flow(
-      _.sortBy(orderBy),
-      reverseOrder ? _.reverse : _.identity
-    ) as any;
+    const order = reverseOrder ? reverseSortOrder : initialSortOrder;
 
-    const data = sort(nextData || this.state.data);
+    const sortItems: (items: ICryptoAsset[]) => ICryptoAsset[] = reverseOrder
+      ? _.reverse
+      : _.sortBy<ICryptoAsset>(orderBy);
+
+    const data = sortItems(this.state.data);
 
     this.setState({
       data,
@@ -139,7 +146,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
     const emptyRows = loading ? rowsPerPage : this.getEmptyRowCount();
 
     return (
-      <React.Fragment>
+      <Fragment>
         <div className={classes.root}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <TableHead
@@ -182,7 +189,7 @@ class EnhancedTable extends React.Component<TableProps, ITableState> {
           onChangePage={this.changePage}
           onChangeRowsPerPage={this.changePageSize}
         />
-      </React.Fragment>
+      </Fragment>
     );
   }
 }
