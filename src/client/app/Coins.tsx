@@ -7,10 +7,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Project, Table } from 'src/client/components';
 import { ICryptoAsset, ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
-import { IAppActions, IAppState } from 'src/client/store/app';
+import { AppActionCreators, IAppState } from 'src/client/store/app';
 import { compose } from 'src/client/utils';
 
-type CoinsProps = IAppState & IAppActions & RouteComponentProps<{}>;
+type CoinsProps = IAppState & AppActionCreators & RouteComponentProps<{}>;
 
 export class Coins extends Component<CoinsProps> {
   static toExactPath = () => <Redirect to="/coins" />;
