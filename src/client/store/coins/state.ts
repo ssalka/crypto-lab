@@ -1,12 +1,12 @@
 import { ICryptoAsset } from 'src/client/interfaces';
 
-export interface IAppState {
-  coins: ICryptoAsset[];
+export interface ICoinsState {
+  all: ICryptoAsset[];
   loading: boolean;
 }
 
-const initialState: IAppState = {
-  coins: [],
+const initialState: ICoinsState = {
+  all: [],
   loading: true
 };
 

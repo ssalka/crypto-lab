@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import React from 'react';
 import { Coins, CoinsProps } from 'src/client/app/Coins';
-import { AppAction, initialState, loadCoins } from 'src/client/store/app';
+import { CoinsAction, initialState, loadCoins } from 'src/client/store/coins';
 
 describe('Coins', () => {
   let loadCoinsSpy: jest.FunctionLike;
@@ -11,7 +11,7 @@ describe('Coins', () => {
     return mount<CoinsProps, ICoinsState>(
       <Coins
         classes={{}}
-        loadCoins={loadCoinsSpy}
+        loadAllCoins={loadCoinsSpy}
         {...initialState}
       />
     );
@@ -25,13 +25,13 @@ describe('Coins', () => {
     it('mounts with the correct initial state', () => {
       cryptoLab = getComponent();
 
-      const { coins, loading } = cryptoLab.props();
+      const { all, loading } = cryptoLab.props();
 
-      expect(coins).toHaveLength(0);
+      expect(all).toHaveLength(0);
       expect(loading).toBe(true);
     });
 
-    it(`dispatches a ${AppAction.LoadCoins} action on mount`, async () => {
+    it(`dispatches a ${CoinsAction.LoadAll} action on mount`, async () => {
       cryptoLab = getComponent();
 
       expect(loadCoinsSpy).toHaveBeenCalled();

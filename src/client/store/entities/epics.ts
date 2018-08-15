@@ -3,15 +3,15 @@ import { from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { toSuccessAction } from 'src/client/store/utils';
-import { fetchCoins } from './api';
-import { AppAction } from './types';
+import { loadEntities } from './api';
+import { EntityAction } from './types';
 
-export const loadCoinsEpic = action$ =>
+export const loadAllEpic = action$ =>
   action$.pipe(
-    ofType(AppAction.LoadCoins),
+    ofType(EntityAction.LoadAll),
     switchMap(action =>
-      from(fetchCoins()).pipe(
-        map(toSuccessAction(AppAction.LoadCoins))
+      from(loadEntities()).pipe(
+        map(toSuccessAction(EntityAction.LoadAll))
       )
     )
   );

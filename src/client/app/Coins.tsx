@@ -7,16 +7,16 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Project, Table } from 'src/client/components';
 import { ICryptoAsset, ViewName, ViewType } from 'src/client/interfaces';
 import { connect } from 'src/client/store';
-import { IAppActions, IAppState } from 'src/client/store/app';
+import { CoinsActionCreators, ICoinsState } from 'src/client/store/coins';
 import { compose } from 'src/client/utils';
 
-type CoinsProps = IAppState & IAppActions & RouteComponentProps<{}>;
+type CoinsProps = ICoinsState & CoinsActionCreators & RouteComponentProps<{}>;
 
 export class Coins extends Component<CoinsProps> {
   static toExactPath = () => <Redirect to="/coins" />;
 
   async componentDidMount() {
-    this.props.loadCoins();
+    this.props.loadAllCoins();
   }
 
   goToProjectView = (event, project: ICryptoAsset) => {
@@ -56,7 +56,7 @@ export class Coins extends Component<CoinsProps> {
 
   TableView: SFC = () => (
     <Table
-      data={this.props.coins}
+      data={this.props.all}
       loading={this.props.loading}
       onRowClick={this.goToProjectView}
     />
@@ -88,8 +88,8 @@ const styles = {
 export default compose(
   connect(
     // TODO: move to `coins` path
-    store => store.app,
-    actions => actions.app
+    store => store.coins,
+    actions => actions.coins
   ),
   withRouter
 )(Coins) as ComponentType & Pick<typeof Coins, 'toExactPath'>;

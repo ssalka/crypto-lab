@@ -68,6 +68,10 @@ class EnhancedTable extends Component<TableProps, ITableState> {
     ]);
   }
 
+  componentDidMount() {
+    this.handleRequestSort(null, this.state.orderBy);
+  }
+
   componentWillReceiveProps(nextProps) {
     const finishedLoading = this.props.loading && !nextProps.loading;
     const dataChanged = this.dataChanged(this.props.data, nextProps.data);

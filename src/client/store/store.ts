@@ -1,18 +1,12 @@
-import { combineReducers, createStore, applyMiddleware } from 'redux';
-import { combineEpics, createEpicMiddleware } from 'redux-observable';
+import { createStore, applyMiddleware } from 'redux';
 
-import { loadCoinsEpic } from './app/epics';
-import appReducer from './app/reducers';
-import initialState, { IStoreState } from './state';
-
-const rootEpic = combineEpics(loadCoinsEpic);
-const epicMiddleware = createEpicMiddleware();
+import rootEpic, { epicMiddleware } from './epic';
+import rootReducer from './reducer';
+import * as initialState from './state';
 
 export default createStore(
-  combineReducers({
-    app: appReducer
-  }),
-  initialState as IStoreState,
+  rootReducer,
+  initialState,
   applyMiddleware(epicMiddleware)
 );
 

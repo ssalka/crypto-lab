@@ -1,19 +1,24 @@
 import { ComponentType } from 'react';
 import { connect as reduxConnect } from 'react-redux';
 import { Action, bindActionCreators } from 'redux';
-import * as allActions from './actions';
-import { IStoreState } from './state';
+import * as storeActions from './actions';
+
+// TSLint bug introduced in TypeScript 2.9 - see issue #3987
+// tslint:disable:whitespace
+type StoreActionsMap = typeof import('./actions');
+type StoreState = typeof import('./state');
+// tslint:enable:whitespace
 
 function bindActions(mapActionsToProps) {
   return dispatch => bindActionCreators(
-    mapActionsToProps(allActions),
+    mapActionsToProps(storeActions),
     dispatch
   );
 }
 
 export function connect<S, A = {}>(
-  mapStateToProps: (store: IStoreState) => S,
-  mapActionsToProps?: (actions: allActions.IStoreActionsMap) => A
+  mapStateToProps: (state: StoreState) => S,
+  mapActionsToProps?: (actions: StoreActionsMap) => A
 ): <P>(Component: ComponentType<P>) => ComponentType<P & S> {
   return reduxConnect(
     mapStateToProps,

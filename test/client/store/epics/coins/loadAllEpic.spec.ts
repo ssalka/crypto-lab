@@ -1,13 +1,13 @@
 import { of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
-import { loadCoins } from 'src/client/store/app/actions';
-import * as api from 'src/client/store/app/api';
-import { loadCoinsEpic } from 'src/client/store/app/epics';
-import { AppAction } from 'src/client/store/app/types';
+import { loadAllCoins } from 'src/client/store/coins/actions';
+import * as api from 'src/client/store/coins/api';
+import { loadAllEpic } from 'src/client/store/coins/epics';
+import { CoinsAction } from 'src/client/store/coins/types';
 import { success } from 'src/client/store/utils';
 
-describe('loadCoinsEpic', () => {
+describe('loadAllEpic', () => {
   let testScheduler: TestScheduler;
 
   const mockFetchCoinsResponse: api.IFetchCoinsResponse[] = [{
@@ -23,13 +23,13 @@ describe('loadCoinsEpic', () => {
     spyOn(api, 'fetchCoins').and.callFake(mockFetchCoins);
   });
 
-  it(`is triggered by the ${AppAction.LoadCoins} action`, done => {
+  it(`is triggered by the ${CoinsAction.LoadCoins} action`, done => {
     testScheduler.run(() => {
-      const action$ = of(loadCoins());
+      const action$ = of(loadAllCoins());
 
       const listener = jest.fn();
 
-      loadCoinsEpic(action$).subscribe(listener);
+      loadAllEpic(action$).subscribe(listener);
 
       setImmediate(() => {
         expect(listener).toHaveBeenCalled();
@@ -38,25 +38,25 @@ describe('loadCoinsEpic', () => {
     });
   });
 
-  it(`is not triggered by actions other than ${AppAction.LoadCoins}`, () => {
+  it(`is not triggered by actions other than ${CoinsAction.LoadCoins}`, () => {
     testScheduler.run(() => {
       const action$ = of({});
 
       const listener = jest.fn();
 
-      loadCoinsEpic(action$).subscribe(listener);
+      loadAllEpic(action$).subscribe(listener);
 
       setImmediate(() => expect(listener).not.toHaveBeenCalled());
     });
   });
 
-  it(`dispatches a ${success(AppAction.LoadCoins)} action upon completion`, () => {
+  it(`dispatches a ${success(CoinsAction.LoadCoins)} action upon completion`, () => {
     testScheduler.run(() => {
-      const action$ = of(loadCoins());
+      const action$ = of(loadAllCoins());
 
-      loadCoinsEpic(action$).subscribe(action => {
+      loadAllEpic(action$).subscribe(action => {
         expect(action).toEqual({
-          type: success(AppAction.LoadCoins),
+          type: success(CoinsAction.LoadCoins),
           payload: mockFetchCoinsResponse
         });
 

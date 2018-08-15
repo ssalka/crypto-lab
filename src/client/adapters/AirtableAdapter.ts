@@ -19,7 +19,7 @@ export default class AirtableAdapter {
 
   async getCoins(): Promise<INormalizedAirtableCoin[]> {
     try {
-      this.cacheCoins(await fetch('/airtable').then(_.invoke('json')));
+      this.cacheCoins(await fetch('/airtable/coins').then(_.invoke('json')));
     }
     catch (e) {
       console.error(e);
