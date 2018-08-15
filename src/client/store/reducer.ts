@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
 
-import appReducer from './app/reducers';
+import coinsReducer from './coins/reducers';
 import entitiesReducer from './entities/reducers';
 
 export default combineReducers({
-  app: appReducer,
+  coins: coinsReducer,
   entities: entitiesReducer
 });

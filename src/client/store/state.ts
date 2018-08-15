@@ -1,2 +1,2 @@
-export { initialState as app } from './app';
+export { initialState as coins } from './coins';
 export { initialState as entities } from './entities';

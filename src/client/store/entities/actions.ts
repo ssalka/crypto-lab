@@ -2,6 +2,6 @@ import { ActionCreator } from 'redux';
 
 import { EntityAction, IEntityAction } from './types';
 
-export const loadAll: ActionCreator<IEntityAction> = () => ({
+export const loadAllEntities: ActionCreator<IEntityAction> = () => ({
   type: EntityAction.LoadAll
 });

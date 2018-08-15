@@ -1,8 +1,8 @@
 import { combineEpics, createEpicMiddleware } from 'redux-observable';
 
-import { loadCoinsEpic } from './app/epics';
-import { loadAllEpic } from './entities/epics';
+import { loadAllEpic as loadCoins } from './coins/epics';
+import { loadAllEpic as loadEntities } from './entities/epics';
 
 export const epicMiddleware = createEpicMiddleware();
 
-export default combineEpics(loadAllEpic, loadCoinsEpic);
+export default combineEpics(loadCoins, loadEntities);
