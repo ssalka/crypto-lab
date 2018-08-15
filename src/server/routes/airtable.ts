@@ -42,9 +42,9 @@ function createRequestHandler<T>(tableName: string, params?: IQueryParams): Requ
   };
 }
 
-export const getEntities: RequestHandler = createRequestHandler<IAirtableEntity[]>('Entities');
+export const getEntities = createRequestHandler<IAirtableEntity[]>('Entities');
 
-export const getCoins: RequestHandler = createRequestHandler<IAirtableCoin[]>('Coins', {
+export const getCoins = createRequestHandler<IAirtableCoin[]>('Coins', {
   sort: [{
     field: 'Rank',
     direction: 'asc'
